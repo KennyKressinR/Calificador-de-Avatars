@@ -1,0 +1,220 @@
+name: Compilar APK de Calificador de Avatars
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Crear el proyecto Android
+        run: |
+          mkdir www && cp index.html www/index.html
+          echo '{"appId":"app.calificador.avatars","appName":"Calificador de Avatars","webDir":"www"}' > capacitor.config.json
+          npm init -y > /dev/null
+          npm i @capacitor/core@8 @capacitor/android@8 @capacitor/filesystem@8
+          npm i -D @capacitor/cli@8
+          npx cap add android
+
+      - name: Guardar archivos en el telefono (la copia de seguridad)
+        run: |
+          cat > www/apk-shim.js <<'EOF'
+          // Android WebView ignora las descargas por enlace (blob). Este parche las intercepta
+          // y las guarda en Documentos/Calificador de Avatars. Solo actua dentro del APK.
+          (function () {
+            var C = window.Capacitor;
+            if (!C || !C.isNativePlatform || !C.isNativePlatform()) return;
+            var FS = (C.Plugins && C.Plugins.Filesystem) || (C.registerPlugin && C.registerPlugin('Filesystem'));
+            if (!FS) return;
+            var CARPETA = 'Calificador de Avatars';
+            function msg(t) { try { if (typeof aviso === 'function') aviso(t); } catch (e) {} }
+            document.addEventListener('click', function (e) {
+              var a = e.target && e.target.closest ? e.target.closest('a[download]') : null;
+              if (!a || String(a.href).indexOf('blob:') !== 0) return;
+              e.preventDefault(); e.stopPropagation();
+              var name = a.getAttribute('download') || 'archivo';
+              fetch(a.href).then(function (r) { return r.blob(); }).then(function (b) {
+                return new Promise(function (ok, no) {
+                  var fr = new FileReader();
+                  fr.onload = function () { ok(String(fr.result).split(',')[1] || ''); };
+                  fr.onerror = no; fr.readAsDataURL(b);
+                });
+              }).then(function (b64) {
+                return Promise.resolve(FS.requestPermissions ? FS.requestPermissions().catch(function () {}) : null).then(function () {
+                  return FS.writeFile({ path: CARPETA + '/' + name, data: b64, directory: 'DOCUMENTS', recursive: true });
+                });
+              }).then(function () { msg('✅ Guardado en Documentos/' + CARPETA + '/' + name); },
+                      function (err) { console.error(err); msg('No se pudo guardar el archivo'); });
+            }, true);
+          })();
+          EOF
+          sed -i 's#</head>#<script src="apk-shim.js"></script></head>#' www/index.html
+          grep -c apk-shim www/index.html
+
+      - name: Icono personalizado
+        continue-on-error: true
+        run: |
+          cat > iconos.py <<'EOF'
+          # Genera todos los iconos de Android (adaptable + clasico + redondo) a partir de icon.png
+          import os, glob
+          from PIL import Image, ImageDraw
+
+          SRC = 'icon.png'
+          RES = 'android/app/src/main/res'
+
+          img = Image.open(SRC).convert('RGB')
+          w, h = img.size
+          s = min(w, h)
+          img = img.crop(((w - s) // 2, (h - s) // 2, (w - s) // 2 + s, (h - s) // 2 + s)).resize((1024, 1024), Image.LANCZOS)
+          bg = img.getpixel((3, 3))
+          bg_hex = '#%02X%02X%02X' % bg
+
+          LEGACY = {'mdpi': 48, 'hdpi': 72, 'xhdpi': 96, 'xxhdpi': 144, 'xxxhdpi': 192}
+          FOREG = {'mdpi': 108, 'hdpi': 162, 'xhdpi': 216, 'xxhdpi': 324, 'xxxhdpi': 432}
+
+          def mask(size, kind):
+              big = size * 4
+              m = Image.new('L', (big, big), 0)
+              d = ImageDraw.Draw(m)
+              if kind == 'round':
+                  d.ellipse((0, 0, big - 1, big - 1), fill=255)
+              else:
+                  d.rounded_rectangle((0, 0, big - 1, big - 1), radius=int(big * 0.2), fill=255)
+              return m.resize((size, size), Image.LANCZOS)
+
+          for d in LEGACY:
+              folder = os.path.join(RES, 'mipmap-' + d)
+              os.makedirs(folder, exist_ok=True)
+              for old in glob.glob(os.path.join(folder, 'ic_launcher*')):
+                  os.remove(old)
+              n, f = LEGACY[d], FOREG[d]
+              for name, kind in (('ic_launcher.png', 'square'), ('ic_launcher_round.png', 'round')):
+                  out = Image.new('RGBA', (n, n), (0, 0, 0, 0))
+                  out.paste(img.resize((n, n), Image.LANCZOS).convert('RGBA'), (0, 0), mask(n, kind))
+                  out.save(os.path.join(folder, name))
+              # capa frontal del icono adaptable: el dibujo ocupa ~70% del lienzo para que el sistema no lo recorte
+              fg = Image.new('RGBA', (f, f), (0, 0, 0, 0))
+              k = int(round(f * 0.70))
+              fg.paste(img.resize((k, k), Image.LANCZOS).convert('RGBA'), ((f - k) // 2, (f - k) // 2))
+              fg.save(os.path.join(folder, 'ic_launcher_foreground.png'))
+
+          adaptive = '''<?xml version="1.0" encoding="utf-8"?>
+          <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+              <background android:drawable="@color/app_icon_bg"/>
+              <foreground android:drawable="@mipmap/ic_launcher_foreground"/>
+          </adaptive-icon>
+          '''
+          os.makedirs(os.path.join(RES, 'mipmap-anydpi-v26'), exist_ok=True)
+          for name in ('ic_launcher.xml', 'ic_launcher_round.xml'):
+              open(os.path.join(RES, 'mipmap-anydpi-v26', name), 'w').write(adaptive)
+          os.makedirs(os.path.join(RES, 'values'), exist_ok=True)
+          open(os.path.join(RES, 'values', 'app_icon.xml'), 'w').write(
+              '<?xml version="1.0" encoding="utf-8"?>\n<resources><color name="app_icon_bg">%s</color></resources>\n' % bg_hex)
+          print('Iconos listos. Color de fondo', bg_hex)
+          EOF
+          if [ -f icon.png ]; then
+            pip3 install --quiet --user --break-system-packages pillow || pip3 install --quiet --user pillow
+            python3 iconos.py
+          else
+            echo "No hay icon.png: se usa el icono por defecto"
+          fi
+
+      - name: Permisos
+        run: |
+          M=android/app/src/main/AndroidManifest.xml
+          sed -i 's#<application#<uses-permission android:name="android.permission.VIBRATE"/><uses-permission android:name="android.permission.WAKE_LOCK"/><uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28"/><uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32"/><application#' $M
+          grep -c WAKE_LOCK $M
+          npx cap sync android
+
+      - name: Firma fija (para poder actualizar sin desinstalar)
+        run: |
+          mkdir -p ~/.android
+          base64 -d > ~/.android/debug.keystore <<'EOF'
+          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
+          EOF
+
+      - name: Version de la app
+        run: |
+          V=$(tr -d ' \r\n' < version.txt 2>/dev/null || true)
+          [ -z "$V" ] && V="1.0"
+          G=android/app/build.gradle
+          sed -i -E "s/versionCode *=? *[0-9]+/versionCode ${{ github.run_number }}/" $G
+          sed -i -E "s/versionName *=? *\"[^\"]*\"/versionName \"$V\"/" $G
+          grep -E "versionCode|versionName" $G
+          echo "APP_VERSION=$V" >> $GITHUB_ENV
+
+      - name: Compilar
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+          cp app/build/outputs/apk/debug/app-debug.apk "../Calificador-Avatars-v${APP_VERSION}.apk"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Calificador-Avatars-APK
+          path: Calificador-Avatars-v*.apk
+
+      - name: Publicar en Releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          APK="Calificador-Avatars-v${APP_VERSION}.apk"
+          TAG="v${APP_VERSION}"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" "$APK" --clobber
+          else
+            gh release create "$TAG" "$APK" --title "Calificador de Avatars $TAG" --notes "APK listo para instalar"
+          fi
