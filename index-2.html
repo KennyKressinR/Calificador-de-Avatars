@@ -1,0 +1,1563 @@
+<!DOCTYPE html>
+<html lang="es" class="svg">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Calificador de Avatars</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap">
+<style>
+/* ===== COLORES (claro por defecto, oscuro automático) ===== */
+/* --h (tono), --s y --l (color principal) y --sb (cuánto color lleva el fondo) vienen de la paleta elegida en Ajustes */
+:root{--h:215;--s:50%;--l:31%;--sb:16%;--bg:hsl(var(--h) var(--sb) 94%);--patron:hsl(var(--h) var(--sb) 89%);--card:#fff;--ink:hsl(var(--h) calc(var(--sb) + 9%) 17%);--soft:hsl(var(--h) calc(var(--sb) - 6%) 41%);--line:hsl(var(--h) calc(var(--sb) + 2%) 85%);--main:hsl(var(--h) var(--s) var(--l));--on:#fff;--gold:#eab62f;--ok:#2f8a4f;--bad:#c2433a;--neu:#7b8a90;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:hsl(var(--h) calc(var(--sb) + 6%) 9%);--patron:hsl(var(--h) calc(var(--sb) + 6%) 6%);--card:hsl(var(--h) calc(var(--sb) + 4%) 14%);--ink:hsl(var(--h) calc(var(--sb) + 9%) 92%);--soft:hsl(var(--h) calc(var(--sb) - 4%) 65%);--line:hsl(var(--h) calc(var(--sb) + 4%) 22%);--main:hsl(var(--h) calc(var(--s) - 5%) calc(var(--l) + 27%));--on:hsl(var(--h) 70% 8%);--ok:#4cb76f;--bad:#e5645a;--neu:#93a9a5}}
+:root[data-theme=dark]{--bg:hsl(var(--h) calc(var(--sb) + 6%) 9%);--patron:hsl(var(--h) calc(var(--sb) + 6%) 6%);--card:hsl(var(--h) calc(var(--sb) + 4%) 14%);--ink:hsl(var(--h) calc(var(--sb) + 9%) 92%);--soft:hsl(var(--h) calc(var(--sb) - 4%) 65%);--line:hsl(var(--h) calc(var(--sb) + 4%) 22%);--main:hsl(var(--h) calc(var(--s) - 5%) calc(var(--l) + 27%));--on:hsl(var(--h) 70% 8%);--ok:#4cb76f;--bad:#e5645a;--neu:#93a9a5}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:1rem/1.4 Fredoka,system-ui,sans-serif}
+button,input,textarea{font:inherit;color:inherit}
+input{accent-color:var(--main)}
+
+/* ===== ENCABEZADO Y PESTAÑAS ===== */
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:0.625rem 0.875rem 0;border-bottom:1px solid var(--line)}
+h1{margin:0 0 0.375rem;font-size:1.3125rem;font-weight:600;text-align:center}
+h2{margin:0;font-size:1.125rem;font-weight:600}
+.tabs{display:flex;max-width:40rem;margin:0 auto}
+.tab{flex:1;padding:0.625rem;border:0;border-bottom:0.1875rem solid transparent;background:none;color:var(--soft);font-weight:600;cursor:pointer}
+.tab.on{color:var(--main);border-color:var(--main)}
+main{max-width:40rem;margin:0 auto;padding:0.875rem}
+
+/* ===== FORMULARIO ===== */
+.card{margin-bottom:0.75rem;padding:0.875rem;background:var(--card);border:1px solid var(--line);border-radius:0.875rem}
+.titulo{display:flex;justify-content:space-between;align-items:center;gap:0.5rem;margin-bottom:0.625rem}
+label,.lbl{display:block;margin:0.75rem 0 0.25rem;font-size:0.875rem;font-weight:600}
+.opt,.ayuda{color:var(--soft);font-size:0.8125rem;font-weight:400}
+.ayuda{margin:0.25rem 0;text-align:center}
+input[type=text],textarea{width:100%;padding:0.625rem 0.75rem;border:1.5px solid var(--line);border-radius:0.625rem;background:var(--bg)}
+textarea{resize:vertical}
+:is(input,textarea,button,summary):focus-visible{outline:2px solid var(--main);outline-offset:1px}
+summary{margin-top:0.75rem;font-size:0.875rem;font-weight:600;cursor:pointer}
+details input{margin-top:0.375rem}
+.btn{padding:0.6875rem 1rem;border:0;border-radius:0.75rem;background:var(--main);color:var(--on);font-weight:600;cursor:pointer}
+.btn.sec{border:1.5px solid var(--line);background:none;color:var(--ink)}
+.link{border:0;background:none;color:var(--main);font-weight:600;cursor:pointer}
+.chips{display:flex;flex-wrap:wrap;gap:0.375rem;margin-bottom:0.625rem}
+.chip{padding:0.4375rem 0.875rem;border:1.5px solid var(--line);border-radius:6.1875rem;background:var(--card);font-weight:600;cursor:pointer}
+.chip.on{border-color:var(--main);background:var(--main);color:var(--on)}
+.foto{display:grid;place-items:center;width:9.375rem;aspect-ratio:3/4;margin:0 auto;padding:0.5rem;border:2px dashed var(--line);border-radius:0.875rem;background:var(--bg) center/cover;color:var(--soft);font-weight:600;text-align:center;cursor:pointer}
+.foto.llena{border-style:solid}
+#btnRecorte{display:block;margin:0.5rem auto 0}
+.stepper{display:flex;align-items:center;gap:0.75rem;font-size:1.25rem}
+.stepper .btn{width:2.625rem;padding:0.5rem 0;font-size:1.25rem}
+.juez-top{display:flex;gap:0.5rem}
+.jnombre{flex:1;font-weight:600}
+.juez-top .pts{width:5.75rem;font-size:1.25rem;font-weight:600;text-align:center}
+.juez label{margin-top:0.5rem}
+.barra{position:sticky;bottom:0;display:flex;align-items:center;justify-content:space-between;gap:0.625rem;margin:0 -0.875rem -0.875rem;padding:0.625rem 0.875rem calc(0.625rem + env(safe-area-inset-bottom,0px));background:var(--card);border-top:1px solid var(--line);box-shadow:0 -0.25rem 0.75rem #0000001a}
+.barra small{display:block;color:var(--soft)}
+.barra b{color:var(--main);font-size:1.875rem;font-weight:600;line-height:1}
+
+/* ===== RANKING ===== */
+.buscador{position:relative;margin-bottom:0.625rem}
+.lupa{position:absolute;left:0.75rem;top:50%;transform:translateY(-50%);color:var(--soft);pointer-events:none}
+.buscador input{padding-left:2.375rem}
+.fila{display:grid;grid-template-columns:2.125rem 3.25rem 1fr auto;align-items:center;gap:0.625rem;width:100%;margin-bottom:0.5rem;padding:0.5rem 0.75rem 0.5rem 0.375rem;background:var(--card);border:1px solid var(--line);border-radius:0.875rem;text-align:left;cursor:pointer}
+.pos{font-size:1.125rem;font-weight:600;text-align:center}
+.mini{display:grid;place-items:center;width:3.25rem;height:3.25rem;border-radius:0.625rem;background:var(--bg) center top/cover;font-size:1.5rem}
+.fila small{display:block;color:var(--soft)}
+.fila small span{margin-right:0.625rem}
+.nota{color:var(--main);font-size:1.25rem;font-weight:600}
+.vacio{padding:1.875rem 0.625rem;color:var(--soft);text-align:center}
+
+/* ===== VENTANAS: RECORTE Y CARNET ===== */
+dialog{width:min(92vw,25rem);max-height:94vh;padding:0;border:0;border-radius:1.375rem;background:var(--card);color:var(--ink);overflow:auto}
+dialog::backdrop{background:#000a}
+.cuerpo{padding:1rem}
+dialog canvas{display:block;width:100%;max-width:17.5rem;margin:0.5rem auto;border-radius:0.75rem;background:var(--bg);touch-action:none}
+#zoom{width:100%}
+.check{display:flex;align-items:center;gap:0.5rem;margin-top:0.75rem}
+.check input{width:1.25rem;height:1.25rem}
+.acciones{display:flex;gap:0.5rem;margin-top:0.875rem}
+.acciones .btn{flex:1;padding:0.6875rem 0.375rem}
+#carnet .acciones{padding:0 1rem 1rem}
+.banner{padding:0.625rem;background:var(--ok);color:var(--on);font-weight:600;text-align:center}
+.carnet-top{padding:1.125rem 1rem 0.5rem;text-align:center}
+.marco{position:relative;width:min(60%,13.125rem,24vh);margin:0 auto 1rem}
+.carnet-foto{display:grid;place-items:center;width:100%;aspect-ratio:3/4;border:0.25rem solid var(--gold);border-radius:0.875rem;background:var(--bg) center/cover;font-size:3rem}
+.sello{position:absolute;right:-1.375rem;bottom:-0.875rem;display:grid;place-items:center;width:4.125rem;height:4.125rem;border:0.1875rem solid var(--card);border-radius:50%;background:var(--gold);color:#3b2a00;font-size:1.1875rem;font-weight:600;box-shadow:0 0.1875rem 0.5rem #0004}
+.pill{display:inline-block;margin:0.25rem 0;padding:2px 0.75rem;border-radius:6.1875rem;background:var(--line);font-size:0.8125rem;font-weight:600}
+.puesto{margin-top:0.375rem;font-weight:600}
+.jscroll{max-height:30vh;margin:0 1rem;border-top:1px solid var(--line);overflow:auto}
+.jrow{padding:0.625rem 0;border-bottom:1px solid var(--line)}
+.jhead{display:flex;justify-content:space-between}
+.badge{padding:0 0.625rem;border-radius:0.5rem;background:var(--gold);color:#3b2a00;font-weight:600}
+.com{margin-top:0.375rem;padding:0.375rem 0.625rem;border-left:0.25rem solid var(--c);border-radius:0.375rem;background:var(--bg);font-size:0.875rem;white-space:pre-wrap}
+.ok{--c:var(--ok)}.bad{--c:var(--bad)}.neu{--c:var(--neu)}
+#aviso{position:fixed;left:50%;bottom:5.625rem;z-index:9;max-width:90vw;padding:0.625rem 1rem;border-radius:0.75rem;background:var(--ink);color:var(--bg);font-weight:600;opacity:0;pointer-events:none;transform:translateX(-50%);transition:opacity .2s}
+#aviso.ver{opacity:1}
+/* ===== JUECES ===== */
+.juez-top,.jhead{align-items:center}
+.jf{display:grid;place-items:center;flex:none;width:2.375rem;height:2.375rem;padding:0;border:0;border-radius:50%;background:var(--line) center/cover;font-size:1.125rem}
+.jf.gr{width:3.75rem;height:3.75rem;font-size:1.5rem;cursor:pointer}
+.jtit{display:flex;align-items:center;flex:1;gap:0.5rem;min-width:0}
+.jn{flex:1;font-weight:600}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:0.5rem;margin-top:0.75rem;text-align:center}
+.stats b{display:block;font-size:1.25rem;font-weight:600}
+.stats small,.veredicto small{display:block;color:var(--soft);font-size:0.75rem;font-weight:400}
+.medidor{height:0.5rem;margin-top:0.625rem;border-radius:6.1875rem;background:var(--line);overflow:hidden}
+.medidor i{display:block;height:100%;background:var(--gold)}
+.veredicto{margin-top:0.625rem;font-weight:600}
+.fila-arch{display:flex;align-items:center;gap:0.625rem}
+.fila-arch div{flex:1;min-width:0}
+.fila-arch small{display:block;color:var(--soft)}
+.fila-arch .btn{padding:0.5rem 0.625rem}
+.opcion{display:block;width:100%;margin-top:0.625rem;padding:0.75rem;border:1.5px solid var(--line);border-radius:0.75rem;background:none;text-align:left;cursor:pointer}
+.opcion small{display:block;color:var(--soft)}
+.cancelar{display:block;margin:0.75rem auto 0}
+.izq{text-align:left}
+.sep{margin:1.125rem 0 0.375rem}
+.mal{border-color:var(--bad)!important}
+/* ===== CRÉDITOS ===== */
+.creditos{margin:1.25rem 0 0.5rem;text-align:center;color:var(--soft);font-size:0.8125rem;line-height:1.5}
+
+/* ===== AJUSTES ===== */
+.engranaje{position:absolute;top:0.375rem;right:0.5rem;width:2.5rem;height:2.5rem;border:0;border-radius:50%;background:none;font-size:1.375rem;cursor:pointer}
+.engranaje.on{background:var(--line)}
+.paleta{display:flex;flex-wrap:wrap;gap:0.75rem;padding:0.25rem}
+.color{width:2.75rem;height:2.75rem;border:0.1875rem solid var(--card);border-radius:50%;background:var(--c);box-shadow:0 0 0 2px var(--line);cursor:pointer}
+.color.on{box-shadow:0 0 0 0.1875rem var(--ink)}
+.opcion:disabled{opacity:.5;cursor:default}
+.desc{margin:0.75rem 0 0;padding:0.625rem 0.75rem;border-radius:0.75rem;background:var(--bg);font-size:0.875rem;text-align:left;white-space:pre-wrap}
+.fila-op{display:flex;align-items:flex-start;gap:0.75rem;margin:0.875rem 0 0;font-size:1rem;cursor:pointer}
+.fila-op input{flex:none;width:1.375rem;height:1.375rem;margin-top:2px}
+.fila-op small{display:block;color:var(--soft);font-size:0.8125rem;font-weight:400}
+/* ===== ICONOS: cada emoji tiene su dibujo SVG; la clase "svg" de <html> decide cuál se ve ===== */
+.ico{display:inline-flex;align-items:center;vertical-align:-.18em}
+.ico .s{display:none;width:1.15em;height:1.15em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+html.svg .ico .e{display:none}
+html.svg .ico .s{display:block}
+/* ===== FONDO CON PATRÓN: símbolos del mismo tono que el fondo, un poco más oscuros ===== */
+body::before{content:'';position:fixed;inset:0;z-index:-1;display:none;pointer-events:none;background:var(--patron);-webkit-mask:var(--forma) 0 0/var(--tam) repeat;mask:var(--forma) 0 0/var(--tam) repeat}
+html[data-patron]:not([data-patron=ninguno]) body::before{display:block}
+.forma{display:grid;place-items:center;width:2.75rem;height:2.75rem;border:1.5px solid var(--line);border-radius:0.75rem;background:var(--card);color:var(--main);cursor:pointer}
+.forma svg{width:1.375rem;height:1.375rem}
+.forma.on{border-color:var(--main);box-shadow:0 0 0 2px var(--main)}
+/* ===== COMENTARIOS COMPACTOS Y SECCIONES AL GUARDAR ===== */
+.juez.compacto{padding:.4rem .6rem;margin-bottom:.4rem}
+.juez.compacto .jf{width:1.75rem;height:1.75rem;font-size:.9rem}
+.juez.compacto .jtit b{font-size:.9rem}
+.juez.compacto .juez-top .pts{width:4.5rem;padding:.3rem .4rem;font-size:1.1rem}
+.mini-btn{display:grid;place-items:center;flex:none;width:2rem;height:2rem;padding:0;border:1.5px solid var(--line);border-radius:.6rem;background:none;color:var(--soft);cursor:pointer}
+.mini-btn.on{border-color:var(--main);color:var(--main)}
+.secciones{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.75rem}
+.secciones .opcion{margin-top:0;text-align:center;font-weight:600}
+.secciones .opcion:first-child{grid-column:1/-1}
+.opcion.on{border-color:var(--main);box-shadow:0 0 0 2px var(--main)}
+/* ===== TACHAR (el avatar se fue) ===== */
+.fila-wrap{display:flex;gap:.4rem;margin-bottom:.5rem}
+.fila-wrap .fila{flex:1;width:auto;min-width:0;margin-bottom:0}
+.tachar{display:grid;place-items:center;flex:none;width:2.75rem;padding:0;border:1px solid var(--line);border-radius:.875rem;background:var(--card);color:var(--soft);font-size:1.1rem;cursor:pointer}
+.tachado .fila{opacity:.55}
+.tachado .fila b,.tachado .fila small,.tachado .fila .nota{text-decoration:line-through;text-decoration-thickness:.12em}
+.tachado .mini{filter:grayscale(1)}
+.tachado .tachar{border-color:var(--main);color:var(--main)}
+.se-fue{margin:.5rem 0 0;padding:.35rem .6rem;border-radius:.6rem;background:var(--bg);color:var(--bad);font-size:.9rem;font-weight:600}
+.carnet-top .link{display:block;margin:.4rem auto 0}
+/* ===== CLASES (Ajustes) ===== */
+.clase-fila{display:flex;align-items:center;gap:.5rem;margin-top:.5rem}
+.clase-fila b,.clase-fila .cn{flex:1;min-width:0}
+.clase-fila small{color:var(--soft)}
+.clase-fila .btn{flex:none;padding:.5rem .7rem}
+.fila-nueva{display:flex;gap:.5rem;margin-top:.75rem}
+.fila-nueva input{flex:1;min-width:0}
+.fila-nueva .btn{flex:none}
+/* ===== BARRA DE DPI ===== */
+.dpi-caja{position:relative;margin:.25rem 0 .5rem}
+.dpi-marcas{position:absolute;left:0;right:0;top:50%;display:flex;justify-content:space-between;padding:0 .75rem;transform:translateY(-50%);pointer-events:none}
+.dpi-marcas span{width:2px;height:.9rem;border-radius:2px;background:var(--soft)}
+.dpi{-webkit-appearance:none;appearance:none;position:relative;display:block;width:100%;height:2.25rem;margin:0;background:transparent;cursor:pointer}
+.dpi::-webkit-slider-runnable-track{height:.25rem;border-radius:99px;background:var(--line)}
+.dpi::-moz-range-track{height:.25rem;border-radius:99px;background:var(--line)}
+.dpi::-webkit-slider-thumb{-webkit-appearance:none;width:1.5rem;height:1.5rem;margin-top:-.625rem;border:3px solid var(--card);border-radius:.4rem;background:var(--main);box-shadow:0 0 0 1.5px var(--main)}
+.dpi::-moz-range-thumb{box-sizing:border-box;width:1.5rem;height:1.5rem;border:3px solid var(--card);border-radius:.4rem;background:var(--main)}
+/* ===== CARNET: la foto del avatar ocupa todo el ancho y se ve igual de grande con cualquier DPI ===== */
+#dlgCarnet{width:min(94vw,600px)}
+#carnet .carnet-top{padding:12px 12px 8px}
+#carnet .marco{width:min(100%,52.5vh);margin:0 auto 12px}
+#carnet .sello{right:10px;bottom:10px}
+/* ===== BORRAR DATOS ===== */
+.btn.peligro{background:var(--bad);color:#fff}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.opcion.peligro{border-color:var(--bad)}
+.opcion.peligro b{color:var(--bad)}
+/* ===== MEJORAS DE COMODIDAD ===== */
+.mini-btn:disabled{opacity:.35;cursor:default}
+.buscador input{padding-right:2.4rem}
+.limpiar-busqueda{position:absolute;right:.35rem;top:50%;transform:translateY(-50%);display:grid;place-items:center;width:2rem;height:2rem;padding:0;border:0;border-radius:50%;background:none;color:var(--soft);cursor:pointer}
+#detClase .chips{margin-top:.5rem}
+/* ===== TEMAS ESPECIALES: cada uno reemplaza el modo y el color; los brillos y el cristal salen de estas variables ===== */
+.especiales{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+.especial{min-height:3.4rem;padding:.6rem .5rem;border:2px solid var(--line);border-radius:.8rem;font-weight:600;cursor:pointer}
+.especial.on{border-color:var(--main);box-shadow:0 0 0 2px var(--main)}
+html[data-especial] body::after{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;background:var(--fondo)}
+html[data-especial] header{background:var(--cab);-webkit-backdrop-filter:var(--cristal);backdrop-filter:var(--cristal)}
+html[data-especial] .card,html[data-especial] .barra{-webkit-backdrop-filter:var(--cristal);backdrop-filter:var(--cristal);box-shadow:var(--sombra)}
+html[data-especial] .btn:not(.sec):not(.peligro),html[data-especial] .chip.on{background:var(--boton);box-shadow:var(--brillo);text-shadow:var(--tsombra,none)}
+html[data-especial] dialog{background:var(--dialogo)}
+html:root[data-especial=darkaero]{--bg:#0a1424;--card:#0f1c33b8;--ink:#e6f4ff;--soft:#8fb2d0;--line:#2a4f78;--main:#19d3ff;--on:#02141c;--patron:#00000055;--gold:#ffe14d;--ok:#3dffa3;--bad:#ff5b7f;--neu:#8fb2d0;--fondo:radial-gradient(ellipse at 15% 0%,#00b4ff55,transparent 55%),radial-gradient(ellipse at 90% 35%,#a03cff44,transparent 50%),linear-gradient(180deg,#07101f,#02050b);--cab:#060d1acc;--boton:linear-gradient(180deg,#7cf0ff 0%,#19c2f5 48%,#0b86c4 52%,#17a9e6 100%);--brillo:inset 0 1px 0 #ffffffb0,0 0 14px #19d3ff77;--cristal:blur(12px) saturate(1.5);--sombra:0 8px 26px #0008,inset 0 1px 0 #ffffff1f;--dialogo:#0c1830}
+html:root[data-especial=aurora]{--bg:#e8f8fb;--card:#ffffffcc;--ink:#0b2a3f;--soft:#3d6580;--line:#4d7f9a55;--main:#0c9a7c;--on:#fff;--patron:#00000014;--gold:#ffd84d;--ok:#12a36b;--bad:#d6335a;--neu:#5d7d92;--fondo:radial-gradient(ellipse at 10% 5%,#6ef2c488,transparent 50%),radial-gradient(ellipse at 90% 20%,#a98bff77,transparent 55%),radial-gradient(ellipse at 40% 100%,#5cd6ff88,transparent 60%),linear-gradient(180deg,#d4f1ff,#c9f6e6 55%,#e3d9ff);--cab:#ffffffb8;--boton:linear-gradient(180deg,#4fe0b5 0%,#17b58a 48%,#0c8f6b 52%,#16a77f 100%);--brillo:inset 0 1px 0 #ffffffd0,0 2px 10px #10a47c66;--tsombra:0 1px 1px #0006;--cristal:blur(14px) saturate(1.6);--sombra:0 6px 22px #0a2a4a33,inset 0 1px 0 #ffffffcc;--dialogo:#eefcff}
+html:root[data-especial=eco]{--bg:#f2fbea;--card:#ffffffcc;--ink:#12351a;--soft:#46704c;--line:#3f7a4a55;--main:#2a8f2f;--on:#fff;--patron:#00000012;--gold:#ffd84d;--ok:#1f9a3a;--bad:#d1453b;--neu:#5d7d62;--fondo:radial-gradient(130% 38% at 15% 112%,#5fbf49 0 58%,transparent 59%),radial-gradient(130% 36% at 90% 115%,#47a53b 0 58%,transparent 59%),linear-gradient(180deg,#8ed5ff 0%,#cfefff 38%,#e6f7c8 72%,#b7e58f 100%);--cab:#ffffffb8;--boton:linear-gradient(180deg,#78d95a 0%,#35a82e 48%,#25851f 52%,#3aa933 100%);--brillo:inset 0 1px 0 #ffffffcc,0 2px 8px #2b9a2e66;--tsombra:0 1px 1px #0006;--cristal:blur(10px) saturate(1.4);--sombra:0 5px 18px #1c5a2633,inset 0 1px 0 #fffffff0;--dialogo:#f6fdee}
+html:root[data-especial=aqua]{--bg:#f0fcff;--card:#ffffff99;--ink:#06303f;--soft:#356d82;--line:#3a8ca855;--main:#0589bf;--on:#fff;--patron:#00506a14;--gold:#ffd84d;--ok:#13a56d;--bad:#d13a5a;--neu:#5b8394;--fondo:radial-gradient(circle at 18% 72%,#ffffffaa 0 5%,transparent 5.5%),radial-gradient(circle at 82% 28%,#ffffff99 0 8%,transparent 8.5%),radial-gradient(circle at 62% 88%,#ffffff88 0 4%,transparent 4.5%),linear-gradient(180deg,#f4feff 0%,#c7eefa 45%,#7fd0ee 100%);--cab:#ffffff99;--boton:linear-gradient(180deg,#52cff2 0%,#0fa3d6 48%,#0580b0 52%,#0b98ca 100%);--brillo:inset 0 1px 0 #fff,inset 0 -8px 12px #ffffff33,0 3px 10px #0589bf66;--tsombra:0 1px 1px #0006;--cristal:blur(18px) saturate(1.8);--sombra:0 8px 24px #0a5a7a33,inset 0 1px 0 #fff,inset 0 0 20px #ffffff55;--dialogo:#eefbff}
+html:root[data-especial=metro]{--bg:#141414;--card:#1f1f1f;--ink:#fff;--soft:#a8a8a8;--line:#3a3a3a;--main:#00aba9;--on:#fff;--patron:#00000066;--gold:#f0a30a;--ok:#60a917;--bad:#e51400;--neu:#8a8a8a;--fondo:#000;--cab:#000;--boton:#00aba9;--brillo:none;--cristal:none;--sombra:none;--dialogo:#1b1b1b}
+html:root[data-especial=miku]{--bg:#effffd;--card:#ffffffcc;--ink:#08403c;--soft:#3d7f7a;--line:#2a8a8455;--main:#0f9a92;--on:#fff;--patron:#00000012;--gold:#ff7bb8;--ok:#13a96b;--bad:#d9356f;--neu:#5d8f8a;--fondo:radial-gradient(circle at 10% 8%,#ffb3d9aa,transparent 40%),radial-gradient(circle at 92% 30%,#39c5bb88,transparent 45%),linear-gradient(170deg,#eafffd,#a8efe9 55%,#7fdcd4);--cab:#ffffffb8;--boton:linear-gradient(180deg,#4fe0d6 0%,#16b2a8 48%,#0c8880 52%,#14a39a 100%);--brillo:inset 0 1px 0 #ffffffd0,0 2px 8px #0f9a9255;--tsombra:0 1px 1px #0006;--cristal:blur(10px) saturate(1.4);--sombra:0 5px 18px #0f7a7433,inset 0 1px 0 #fff;--dialogo:#f1fffd}
+html:root[data-especial=teto]{--bg:#fff3f5;--card:#ffffffd0;--ink:#4a1020;--soft:#8a4a5a;--line:#b05a6e55;--main:#c8284a;--on:#fff;--patron:#00000012;--gold:#ff9fb2;--ok:#2a9a5a;--bad:#b3122e;--neu:#8a6a72;--fondo:radial-gradient(circle at 12% 8%,#ffc2cf99,transparent 42%),radial-gradient(circle at 90% 35%,#8a8a9644,transparent 45%),linear-gradient(170deg,#fff4f6,#ffc7d3 55%,#f08aa0);--cab:#ffffffb8;--boton:linear-gradient(180deg,#f0607c 0%,#cf2f50 48%,#a51a3a 52%,#c42a48 100%);--brillo:inset 0 1px 0 #ffffffa0,0 2px 8px #b01f4055;--tsombra:0 1px 1px #0006;--cristal:blur(10px) saturate(1.3);--sombra:0 5px 18px #b01f4033,inset 0 1px 0 #fff;--dialogo:#fff6f8}
+html:root[data-especial=neru]{--bg:#15120a;--card:#241f0fcc;--ink:#fff6c8;--soft:#cdbf7d;--line:#4a3f14;--main:#ffd400;--on:#1a1500;--patron:#00000055;--gold:#ffd400;--ok:#7be04a;--bad:#ff5a4d;--neu:#bfb27a;--fondo:radial-gradient(circle at 85% 8%,#ffd40044,transparent 40%),linear-gradient(170deg,#1b170a,#0d0b05);--cab:#0d0b05d0;--boton:linear-gradient(180deg,#ffe866 0%,#ffd400 48%,#d9b100 52%,#ffcf00 100%);--brillo:inset 0 1px 0 #fff8,0 0 12px #ffd40044;--cristal:blur(8px);--sombra:0 6px 20px #0008;--dialogo:#1e1a0c}
+html[data-especial=darkaero] body,html[data-especial=aurora] body,html[data-especial=eco] body{font-family:"Segoe UI",Fredoka,system-ui,sans-serif}
+html[data-especial=aqua] body{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif}
+html[data-especial=aqua] :is(.btn,.chip){border-radius:99px}
+html[data-especial=metro] body{font-family:"Segoe UI","Open Sans",system-ui,sans-serif}
+html[data-especial=metro] h1,html[data-especial=metro] h2{font-weight:300}
+html[data-especial=metro] :is(.card,.btn,.chip,.opcion,.fila,.foto,.tachar,.mini-btn,.pill,.com,.badge,.desc,.se-fue,.forma,.especial,input,textarea,dialog,.marco,.carnet-foto,.mini,.tab){border-radius:0}
+/* ===== AJUSTES EN GRUPOS Y CARNET RENOVADO ===== */
+.grupo{padding:0;overflow:hidden}
+.grupo>summary{display:flex;align-items:center;gap:.75rem;margin:0;padding:.8rem .9rem;list-style:none;cursor:pointer}
+.grupo>summary::-webkit-details-marker{display:none}
+.grupo>summary::after{content:"";flex:none;margin-left:auto;width:.55rem;height:.55rem;border-right:2px solid var(--soft);border-bottom:2px solid var(--soft);transform:rotate(45deg);transition:transform .2s}
+.grupo[open]>summary::after{transform:rotate(-135deg)}
+.grupo[open]>summary{border-bottom:1px solid var(--line)}
+.g-ico{display:grid;place-items:center;flex:none;width:2.4rem;height:2.4rem;border-radius:.7rem;background:var(--bg);font-size:1.2rem}
+.g-txt b{display:block;font-size:1.05rem;font-weight:600}
+.g-txt small{display:block;color:var(--soft);font-size:.8rem;font-weight:400}
+.grupo-cuerpo{padding:.25rem .9rem .9rem}
+.sub{margin:1.1rem 0 .1rem;padding-top:.8rem;border-top:1px solid var(--line);color:var(--soft);font-size:.8rem;font-weight:600}
+.sub:first-child{margin-top:.5rem;padding-top:0;border-top:0}
+#tarjetaBorrar .g-ico{background:var(--bad);color:#fff}
+#carnet .marco{width:min(85%,44.6vh);margin:0 auto 14px}
+.carnet-barra{position:sticky;top:0;z-index:3;display:flex;align-items:center;justify-content:space-between;gap:.5rem;padding:.5rem .6rem;border-bottom:1px solid var(--line);background:var(--dialogo,var(--card))}
+.carnet-nav{display:flex;align-items:center;gap:.4rem}
+.cnt{min-width:4.2rem;text-align:center}
+.carnet-foto{box-shadow:0 10px 26px #0000003a}
+.medalla{position:absolute;left:10px;top:10px;display:grid;place-items:center;width:2.6rem;height:2.6rem;border-radius:50%;background:var(--card);box-shadow:0 3px 8px #0004;font-size:1.5rem}
+.gt{color:var(--soft);font-weight:600}
+.pills{display:flex;flex-wrap:wrap;justify-content:center;gap:.35rem;margin:.5rem 0}
+.pills .pill{margin:0}
+.pill.suave{border:1px solid var(--line);background:none;font-weight:400}
+.datos{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin:.75rem 0 .25rem}
+.datos div{padding:.5rem .25rem;border:1px solid var(--line);border-radius:.8rem;background:var(--bg)}
+.datos b{display:block;color:var(--main);font-size:1.25rem;font-weight:600}
+.datos small{display:block;color:var(--soft);font-size:.72rem;line-height:1.2}
+.jrow .medidor{margin-top:.4rem}
+.carnet-acciones{position:sticky;bottom:0;z-index:3;display:flex;gap:.5rem;padding:.6rem .75rem;border-top:1px solid var(--line);background:var(--dialogo,var(--card))}
+.carnet-acciones .btn{flex:1;padding:.7rem .4rem}
+#carnet>.link{display:block;margin:.5rem auto}
+.fila-cuenta{display:flex;align-items:center;justify-content:space-between}
+.fila-cuenta p{margin:.25rem 0}
+#aviso.con-accion{pointer-events:auto}
+.deshacer{margin-left:.5rem;padding:.2rem .8rem;border:0;border-radius:99px;background:var(--bg);color:var(--ink);font-weight:600;cursor:pointer}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>⭐ Calificador de Avatars</h1>
+  <button class="engranaje" data-v="ajustes" aria-label="Ajustes">⚙️</button>
+  <nav class="tabs">
+    <button class="tab on" data-v="calificar">✍️ Calificar</button>
+    <button class="tab" data-v="ranking">🏆 Ranking</button>
+    <button class="tab" data-v="equipo">👥 Jueces</button>
+  </nav>
+</header>
+
+<main>
+  <!-- ===== PANTALLA 1: CALIFICAR ===== -->
+  <section id="calificar">
+    <div class="card">
+      <div class="titulo"><h2 id="tituloForm"></h2><button class="link" id="limpiar">↺ Empezar de cero</button></div>
+      <div class="foto" id="foto"></div>
+      <p class="ayuda" id="pieFoto"></p>
+      <input type="file" id="archivo" accept="image/*" hidden>
+      <button class="btn sec" id="btnRecorte" hidden>✂️ Ajustar recorte</button>
+      <label for="nombre">Nombre del avatar <span class="opt">(obligatorio)</span></label>
+      <input type="text" id="nombre" maxlength="40" placeholder="Ej: Valentina">
+      <details>
+        <summary>Añadir gamertag <span class="opt">(opcional)</span></summary>
+        <input type="text" id="gamertag" maxlength="40" placeholder="Usuario de Roblox">
+      </details>
+      <label for="desc">Descripción <span class="opt">(opcional)</span></label>
+      <textarea id="desc" rows="2" maxlength="300" placeholder="¿Qué quiso lograr con su avatar? Ej: estilo Ghibli, estilo emo..."></textarea>
+      <details id="detClase">
+        <summary id="resumenClase"></summary>
+        <div class="chips" id="chipsClase"></div>
+        <p class="ayuda izq" id="notaClase"></p>
+      </details>
+    </div>
+
+    <div class="card">
+      <h2>Paso 2: Jueces</h2>
+      <span class="opt">Quién califica a cada avatar</span>
+      <div class="acciones">
+        <button class="btn sec" id="btnComentarios"></button>
+        <button class="btn sec" id="irJueces">👥 Administrar</button>
+      </div>
+    </div>
+    <div id="jueces"></div>
+
+    <div class="barra">
+      <div><small>Promedio total</small><b id="promedio">—</b></div>
+      <button class="btn" id="guardar">💾 Guardar avatar</button>
+    </div>
+  </section>
+
+  <!-- ===== PANTALLA 2: RANKING ===== -->
+  <section id="ranking" hidden>
+    <div class="buscador"><span class="lupa">🔍</span><input type="text" id="buscar" placeholder="Buscar por nombre o gamertag"><button class="limpiar-busqueda" id="limpiarBusqueda" hidden aria-label="Borrar búsqueda">✖</button></div>
+    <div class="chips" id="chipsFiltro"></div>
+    <p class="ayuda izq">Ordenar por</p>
+    <div class="chips" id="chipsOrden"></div>
+    <label class="check" id="filaTachados" hidden><input type="checkbox" id="ocultarTachados"> Ocultar a los tachados</label>
+    <div class="fila-cuenta"><p class="ayuda izq" id="contarRanking"></p><button class="link" id="copiarRanking">📋 Copiar</button></div>
+    <div id="lista"></div>
+  </section>
+
+  <!-- ===== PANTALLA 3: JUECES ===== -->
+  <section id="equipo" hidden>
+    <div class="titulo"><h2 id="contJueces"></h2><button class="btn" id="addJuez">➕ Añadir juez</button></div>
+    <div id="listaJueces"></div>
+    <button class="opcion peligro" id="reiniciarProgreso"><b>Borrar el progreso de los jueces</b><small>Pone en cero las estadísticas de todos (los avatars y sus puntajes se quedan)</small></button>
+    <h2 class="sep">📦 Archivados <span class="opt" id="contArchivados"></span></h2>
+    <p class="ayuda izq">Los jueces que quites o reemplaces de forma temporal aparecen aquí. Puedes reintegrarlos cuando quieras.</p>
+    <div class="buscador" id="cajaBuscarArchivo"><span class="lupa">🔍</span><input type="text" id="buscarArchivo" placeholder="Buscar juez archivado"></div>
+    <div class="chips" id="chipsOrdenArchivo"></div>
+    <div id="listaArchivo"></div>
+    <input type="file" id="archivoJuez" accept="image/*" hidden>
+  </section>
+
+  <!-- ===== PANTALLA 4: AJUSTES (engranaje ⚙️) ===== -->
+  <section id="ajustes" hidden>
+    <p class="ayuda izq">Toca un grupo para abrirlo.</p>
+
+    <details class="card grupo" id="grupoCalificar">
+      <summary><span class="g-ico">🧰</span><span class="g-txt"><b>Al calificar</b><small>Teclado, comentarios, clases y guardado</small></span></summary>
+      <div class="grupo-cuerpo">
+        <label class="fila-op"><input type="checkbox" data-o="enterPuntaje"><span><b>Enter pasa al siguiente puntaje</b><small>Con Enter saltas del puntaje de un juez al del siguiente (Mayús + Enter vuelve al anterior). Si lo apagas, Enter baja por los comentarios</small></span></label>
+        <label class="fila-op"><input type="checkbox" data-o="compacto"><span><b>Ocultar los comentarios de los jueces</b><small>Deja solo el puntaje de cada juez, lo más compacto posible</small></span></label>
+        <label class="fila-op"><input type="checkbox" data-o="claseAbierta"><span><b>Clase desplegada al registrar</b><small>Si lo apagas, la clase aparece plegada y solo se ve un resumen</small></span></label>
+        <label class="fila-op"><input type="checkbox" data-o="preguntarSec"><span><b>Preguntar la clase al guardar</b><small>Solo si no la elegiste en el registro. Si lo apagas, sin clase elegida va a General</small></span></label>
+        <label class="fila-op"><input type="checkbox" data-o="carnet"><span><b>Mostrar el carnet al guardar</b><small>Apágalo para guardar y seguir directo con el siguiente avatar</small></span></label>
+        <label class="fila-op"><input type="checkbox" data-o="borrador"><span><b>Borrador automático</b><small>Si cierras la app a medias, recupera lo que estabas llenando</small></span></label>
+      </div>
+    </details>
+
+    <details class="card grupo" id="grupoSonido">
+      <summary><span class="g-ico">🔔</span><span class="g-txt"><b>Sonido y pantalla</b><small>Sonido, vibración y pantalla encendida</small></span></summary>
+      <div class="grupo-cuerpo">
+        <label class="fila-op"><input type="checkbox" data-o="sonido"><span><b>Sonido de burbuja al tocar</b><small>Un "plop" suave cada vez que tocas un botón</small></span></label>
+        <label class="fila-op"><input type="checkbox" data-o="vibrar"><span><b>Vibración suave al tocar</b><small>Una vibración muy corta en cada botón (solo en celulares que la permitan)</small></span></label>
+        <label class="fila-op"><input type="checkbox" data-o="pantalla"><span><b>Mantener la pantalla encendida</b><small>Útil durante una dinámica en vivo, para que no se apague mientras calificas</small></span></label>
+      </div>
+    </details>
+
+    <details class="card grupo" id="tarjetaClases">
+      <summary><span class="g-ico">🏷️</span><span class="g-txt"><b>Clases</b><small>Los grupos del ranking: añade las tuyas</small></span></summary>
+      <div class="grupo-cuerpo">
+        <p class="ayuda izq">General incluye a todos; a cada avatar le puedes dar una o varias clases al guardarlo.</p>
+        <div id="listaClases"></div>
+        <div class="fila-nueva"><input type="text" id="nuevaClase" maxlength="20" placeholder="Nombre de la nueva clase"><button class="btn" id="addClase">➕ Añadir</button></div>
+      </div>
+    </details>
+
+    <details class="card grupo" id="grupoApariencia">
+      <summary><span class="g-ico">🎨</span><span class="g-txt"><b>Apariencia</b><small>Colores, temas especiales, fondo, iconos y tamaño</small></span></summary>
+      <div class="grupo-cuerpo">
+        <div class="sub">Colores</div>
+        <div class="lbl">Modo</div>
+        <div class="chips" id="chipsModo"></div>
+        <div class="lbl">Color: <span id="nomPaleta"></span></div>
+        <div class="paleta" id="paleta"></div>
+        <div class="sub">Temas especiales</div>
+        <p class="ayuda izq">Estilos completos con degradados, brillos y cristal. Al elegir uno reemplaza el modo y el color; para volver, toca "Colores normales" o elige un color.</p>
+        <div class="especiales" id="especiales"></div>
+        <div class="sub">Fondo</div>
+        <div class="lbl">Patrón: <span id="nomFondo"></span></div>
+        <div class="paleta" id="formas"></div>
+        <div class="lbl">Tamaño del patrón</div>
+        <div class="dpi-caja">
+          <div class="dpi-marcas"><span></span><span></span><span></span><span></span><span></span></div>
+          <input type="range" id="tamPatron" class="dpi" min="0" max="4" step="1" value="2" aria-label="Tamaño del patrón">
+        </div>
+        <div class="sub">Iconos y tamaño</div>
+        <div class="lbl">Iconos</div>
+        <div class="chips" id="chipsIconos"></div>
+        <div class="lbl">Tamaño (DPI)</div>
+        <div class="dpi-caja">
+          <div class="dpi-marcas"><span></span><span></span><span></span><span></span><span></span></div>
+          <input type="range" id="dpi" class="dpi" min="0" max="4" step="1" value="3" aria-label="Tamaño de la app (DPI)">
+        </div>
+      </div>
+    </details>
+
+    <details class="card grupo" id="grupoDatos">
+      <summary><span class="g-ico">💾</span><span class="g-txt"><b>Tus datos</b><small>Exportar e importar una copia</small></span></summary>
+      <div class="grupo-cuerpo">
+        <p class="ayuda izq" id="estadoDatos"></p>
+        <button class="opcion" id="exportar"><b>⬇️ Exportar copia</b><small>Descarga un archivo con tus avatars, jueces y fotos</small></button>
+        <button class="opcion" id="importar"><b>⬆️ Importar copia</b><small>Carga un archivo que exportaste antes</small></button>
+        <input type="file" id="archivoCopia" accept=".json,application/json" hidden>
+      </div>
+    </details>
+
+    <details class="card grupo" id="tarjetaBorrar">
+      <summary><span class="g-ico">🗑️</span><span class="g-txt"><b>Borrar datos</b><small>Para empezar una dinámica nueva</small></span></summary>
+      <div class="grupo-cuerpo">
+        <p class="ayuda izq">Antes de borrar puedes guardar una copia en «Tus datos». Cada borrado pide confirmación y hay que esperar 5 segundos.</p>
+        <button class="opcion peligro" id="borrarProgreso"><b>Borrar el progreso de los jueces</b><small>Pone en cero sus estadísticas. Los avatars y sus puntajes se quedan</small></button>
+        <button class="opcion peligro" id="borrarAvatars"><b>Borrar todos los avatars</b><small>Quita a todos los participantes. Los jueces (con su progreso), las clases y tus preferencias se quedan</small></button>
+        <button class="opcion peligro" id="borrarTodo"><b>Borrar todo</b><small>Avatars, jueces y clases propias. Se mantienen tus preferencias (tema, DPI, iconos)</small></button>
+      </div>
+    </details>
+
+    <p class="creditos">☆Creado por KennyKressinR☆<br>Todos los derechos reservados</p>
+  </section>
+</main>
+
+<dialog id="dlgRecorte">
+  <div class="cuerpo">
+    <h2>✂️ <span id="tituloRecorte">Recorta la foto</span></h2>
+    <p class="ayuda">Arrastra la imagen para moverla y usa la barra para acercar.</p>
+    <canvas id="lienzo" width="420" height="560"></canvas>
+    <input type="range" id="zoom" min="1" max="4" step="0.01" value="1" aria-label="Acercar">
+    <label class="check" id="filaRecordar"><input type="checkbox" id="recordar"> <span id="textoRecordar">Usar este mismo recorte en las próximas fotos</span></label>
+    <div class="acciones"><button class="btn sec" id="cancelarRecorte">Cancelar</button><button class="btn" id="aceptarRecorte">✔ Usar recorte</button></div>
+  </div>
+</dialog>
+<dialog id="dlgCarnet"><div id="carnet"></div></dialog>
+<dialog id="dlgJuez"><div class="cuerpo" id="cuerpoJuez"></div></dialog>
+<div id="aviso" role="status"></div>
+
+<script>
+/* =====================================================================
+   ÍNDICE: 1 Datos · 2 Utilidades · 3 Iconos · 4 Recorte de foto · 5 Pantalla Calificar
+           6 Pantalla Ranking · 7 Carnet · 8 Pantalla Jueces · 9 Ajustes · 10 Arranque
+   ===================================================================== */
+
+/* ---------- 1. DATOS Y ALMACENAMIENTO ---------- */
+const ICONO = {General: '🌟', Mujeres: '👩', Hombres: '👨', Memes: '😂', Horror: '👻', Femboy: '🎀', Claro: '☀️', Oscuro: '🌙', Automático: '🔄', Puntaje: '🏆', Recientes: '🕒', 'A–Z': '🔤'};
+const MAX_JUECES = 16;
+let ASPECTO = 4 / 3;                       // alto ÷ ancho de la foto
+
+let state = {                                // todo lo que se guarda en el navegador
+  avatars: [], nJueces: 3, recordar: false, recorte: null, recordarJuez: false, recorteJuez: null,
+  clases: ['General', 'Mujeres', 'Hombres', 'Femboy', 'Memes', 'Horror'],   // clases del ranking (en Ajustes se pueden añadir más)
+  tema: {modo: 'Automático', paleta: 'Azul'},
+  pref: {iconos: 'SVG', patron: 'estrella', dpi: 3},                       // iconos: 'SVG' o 'Emojis' (Ajustes > Preferencias)
+  opc: {borrador: true, carnet: true, preguntarSec: true, compacto: false, sonido: true, claseAbierta: false, enterPuntaje: true, vibrar: false, pantalla: false},   // opciones de comodidad (Ajustes)
+  nombres: Array.from({length: MAX_JUECES}, (_, i) => 'Juez ' + (i + 1))
+};
+let form = formVacio();                      // el avatar que se está llenando
+let srcImg = null;                           // foto original (solo mientras la app está abierta)
+let ocultarTachados = false;                 // oculta del ranking a los avatars tachados
+let orden = 'Puntaje';                       // cómo se ordena la lista del ranking
+let filtro = 'General';                        // filtro del ranking
+
+const Almacen = {                            // IndexedDB: cabe mucho más que localStorage
+  db: null,
+  abrir() {
+    return this.db ||= new Promise((ok, no) => {
+      const r = indexedDB.open('calificador-avatars', 1);
+      r.onupgradeneeded = () => r.result.createObjectStore('kv');
+      r.onsuccess = () => ok(r.result);
+      r.onerror = () => no(r.error);
+    });
+  },
+  async leer(clave = 'estado') {
+    try {
+      const db = await this.abrir();
+      return await new Promise(ok => {
+        const q = db.transaction('kv').objectStore('kv').get(clave);
+        q.onsuccess = () => ok(q.result); q.onerror = () => ok(null);
+      });
+    } catch (e) { return null; }
+  },
+  async guardar(valor, clave = 'estado') {
+    try {
+      const db = await this.abrir();
+      await new Promise((ok, no) => {
+        const t = db.transaction('kv', 'readwrite');
+        t.objectStore('kv').put(valor, clave);
+        t.oncomplete = ok; t.onerror = () => no(t.error);
+      });
+    } catch (e) { aviso('⚠️ No se pudo guardar en este navegador'); }
+  }
+};
+const guardarEstado = () => Almacen.guardar(state);
+
+/* ---------- 2. UTILIDADES ---------- */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
+const num = s => { const n = parseFloat(String(s).replace(',', '.')); return isNaN(n) ? null : Math.min(10, Math.max(0, n)); };
+const promedio = js => { const v = js.map(j => num(j.pts)).filter(n => n !== null); return v.length ? v.reduce((a, b) => a + b) / v.length : null; };
+const fondo = foto => foto ? `style="background-image:url('${foto}')"` : '';
+
+let bloqueo = null;                          // evita que la pantalla se apague mientras la app está abierta (opción en Ajustes)
+async function mantenerPantalla() {
+  try {
+    if (state.opc.pantalla && !bloqueo && navigator.wakeLock) {
+      bloqueo = await navigator.wakeLock.request('screen');
+      bloqueo.addEventListener('release', () => { bloqueo = null; });
+    } else if (!state.opc.pantalla && bloqueo) { await bloqueo.release(); bloqueo = null; }
+  } catch (e) { /* este navegador no lo permite */ }
+}
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') mantenerPantalla(); });
+let audio = null;
+function burbuja() {                         // sonido de gotita: un tono corto que sube de grave a agudo y se apaga rápido
+  if (!state.opc.sonido) return;
+  try {
+    audio ??= new (window.AudioContext || window.webkitAudioContext)();
+    if (audio.state === 'suspended') audio.resume();
+    const t = audio.currentTime, osc = audio.createOscillator(), vol = audio.createGain();
+    const base = 380 + Math.random() * 260;  // cada burbuja suena un poco distinta
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(base, t);
+    osc.frequency.exponentialRampToValueAtTime(base * 2.2, t + 0.09);
+    vol.gain.setValueAtTime(0.0001, t);
+    vol.gain.exponentialRampToValueAtTime(0.18, t + 0.012);
+    vol.gain.exponentialRampToValueAtTime(0.0001, t + 0.14);
+    osc.connect(vol).connect(audio.destination);
+    osc.start(t); osc.stop(t + 0.16);
+  } catch (e) { /* sin audio: no pasa nada */ }
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('button, summary, [role=button], .foto, .fila-op')) return;
+  burbuja();
+  if (state.opc.vibrar) navigator.vibrate?.(8);           // vibración suave
+}, true);
+
+function aviso(texto, accion = null) {       // mensajito temporal abajo (con un botón opcional, por ejemplo "Deshacer")
+  const el = $('#aviso');
+  el.textContent = texto;
+  if (accion) {
+    const b = document.createElement('button');
+    b.className = 'deshacer'; b.textContent = accion.etiqueta;
+    b.onclick = () => { el.classList.remove('ver'); accion.fn(); };
+    el.append(' ', b);
+  }
+  el.classList.toggle('con-accion', !!accion);
+  iconizar(el); el.classList.add('ver');
+  clearTimeout(aviso.t); aviso.t = setTimeout(() => el.classList.remove('ver'), accion ? 7000 : 2800);
+}
+function pintarChips(el, lista, activo, alElegir) {
+  el.innerHTML = lista.map(c => `<button class="chip ${c === activo ? 'on' : ''}" data-c="${c}">${ICONO[c] ?? ''} ${c}</button>`).join('');
+  iconizar(el);
+  el.onclick = e => { const b = e.target.closest('.chip'); if (b) alElegir(b.dataset.c); };
+}
+function dosToques(btn, accion) {            // botón delicado: pide un segundo toque para confirmar
+  const html = btn.innerHTML;
+  btn.onclick = () => {
+    if (btn.dataset.seguro) { clearTimeout(btn.t); delete btn.dataset.seguro; btn.innerHTML = html; iconizar(btn); accion(); return; }
+    btn.dataset.seguro = 1; btn.textContent = '¿Seguro?';
+    btn.t = setTimeout(() => { delete btn.dataset.seguro; btn.innerHTML = html; iconizar(btn); }, 3000);
+  };
+}
+function irA(vista) {
+  for (const id of ['calificar', 'ranking', 'equipo', 'ajustes']) $('#' + id).hidden = id !== vista;
+  document.querySelectorAll('[data-v]').forEach(t => t.classList.toggle('on', t.dataset.v === vista));
+  if (vista === 'ranking') pintarRanking();
+  if (vista === 'equipo') pintarEquipo();
+  if (vista === 'ajustes') pintarAjustes();
+  if (vista === 'calificar') pintarClaseForm();
+  scrollTo(0, 0);
+}
+
+/* ---------- 3. ICONOS (SVG o emoji) ---------- */
+// Para añadir un icono nuevo: 1) su dibujo en DIBUJOS  2) el emoji que reemplaza en ICONOS.
+// Después basta con escribir el emoji en cualquier texto: iconizar() lo envuelve y el CSS muestra emoji o SVG.
+const DIBUJOS = {                            // dibujos de 24x24 (solo trazo, toman el color del texto)
+  estrella: '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>',
+  ajustes: '<circle cx="12" cy="12" r="3"/><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>',
+  pluma: '<path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>',
+  lapiz: '<path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>',
+  trofeo: '<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>',
+  usuarios: '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+  usuario: '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+  reiniciar: '<polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>',
+  camara: '<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>',
+  tijeras: '<circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/>',
+  guardar: '<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>',
+  pulgarArriba: '<path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>',
+  pulgarAbajo: '<path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/>',
+  neutro: '<circle cx="12" cy="12" r="10"/><line x1="8" y1="15" x2="16" y2="15"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/>',
+  sonrisa: '<circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/>',
+  enojado: '<circle cx="12" cy="12" r="10"/><path d="M16 16s-1.5-2-4-2-4 2-4 2"/><path d="M7.5 8 10 9"/><path d="m14 9 2.5-1"/><path d="M9 10h.01"/><path d="M15 10h.01"/>',
+  risa: '<circle cx="12" cy="12" r="10"/><path d="M18 13a6 6 0 0 1-6 5 6 6 0 0 1-6-5h12Z"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/>',
+  buscar: '<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>',
+  reloj: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+  letras: '<path d="M21 14h-5"/><path d="M16 16v-3.5a2.5 2.5 0 0 1 5 0V16"/><path d="M4.5 13h6"/><path d="m3 16 4.5-9 4.5 9"/>',
+  mujer: '<circle cx="12" cy="9" r="6"/><path d="M12 15v7"/><path d="M9 19h6"/>',
+  hombre: '<path d="M16 3h5v5"/><path d="m21 3-6.75 6.75"/><circle cx="10" cy="14" r="6"/>',
+  sol: '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>',
+  luna: '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>',
+  girar: '<polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>',
+  mas: '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
+  archivo: '<polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/>',
+  deshacer: '<polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/>',
+  basura: '<path d="M3 6h18"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>',
+  balanza: '<path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/>',
+  ok: '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>',
+  mensaje: '<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>',
+  check: '<polyline points="20 6 9 17 4 12"/>',
+  bajar: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>',
+  subir: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>',
+  herramienta: '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>',
+  paleta: '<circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/>',
+  alerta: '<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>',
+  nota: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>',
+  oro: '<circle cx="12" cy="12" r="10" fill="#eab62f" stroke="none"/><text x="12" y="16.4" text-anchor="middle" font-size="12" font-weight="700" fill="#3b2a00" stroke="none">1</text>',
+  plata: '<circle cx="12" cy="12" r="10" fill="#b4bcc4" stroke="none"/><text x="12" y="16.4" text-anchor="middle" font-size="12" font-weight="700" fill="#2b3036" stroke="none">2</text>',
+  bronce: '<circle cx="12" cy="12" r="10" fill="#c98a52" stroke="none"/><text x="12" y="16.4" text-anchor="middle" font-size="12" font-weight="700" fill="#3a2410" stroke="none">3</text>',
+  fantasma: '<path d="M9 10h.01"/><path d="M15 10h.01"/><path d="M12 2a8 8 0 0 0-8 8v12l3-3 2.5 2.5L12 19l2.5 2.5L17 19l3 3V10a8 8 0 0 0-8-8z"/>',
+  tachar: '<path d="M16 4H9a3 3 0 0 0-2.83 4"/><path d="M14 12a4 4 0 0 1 0 8H6"/><line x1="4" y1="12" x2="20" y2="12"/>',
+  etiqueta: '<path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/>',
+  lazo: '<path d="M12 12C9 6 2 6 2 11c0 4 7 5 10 1z"/><path d="M12 12c3-6 10-6 10-1 0 4-7 5-10 1z"/><path d="M11.2 13.4 8 21"/><path d="M12.8 13.4 16 21"/><circle cx="12" cy="12" r="1.4"/>',
+  arriba: '<polyline points="18 15 12 9 6 15"/>',
+  abajo: '<polyline points="6 9 12 15 18 9"/>',
+  equis: '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
+  destellos: '<path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/>',
+  portapapeles: '<rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>',
+  izquierda: '<polyline points="15 18 9 12 15 6"/>',
+  derecha: '<polyline points="9 18 15 12 9 6"/>',
+  campana: '<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>'
+};
+const ICONOS = {                             // emoji -> nombre de su dibujo
+  '⭐': 'estrella', '🌟': 'estrella', '⚙': 'ajustes', '✍': 'pluma', '✏': 'lapiz', '🏆': 'trofeo', '👥': 'usuarios', '👤': 'usuario',
+  '↺': 'reiniciar', '📷': 'camara', '✂': 'tijeras', '💾': 'guardar', '👍': 'pulgarArriba', '👎': 'pulgarAbajo', '😐': 'neutro',
+  '🙂': 'sonrisa', '😊': 'sonrisa', '😠': 'enojado', '😂': 'risa', '🔍': 'buscar', '🤔': 'buscar', '🕒': 'reloj', '🔤': 'letras',
+  '👩': 'mujer', '👨': 'hombre', '☀': 'sol', '🌙': 'luna', '🔄': 'girar', '➕': 'mas', '📦': 'archivo', '↩': 'deshacer', '🗑': 'basura',
+  '⚖': 'balanza', '✅': 'ok', '💬': 'mensaje', '✔': 'check', '⬇': 'bajar', '⬆': 'subir', '🧰': 'herramienta', '🎨': 'paleta',
+  '⚠': 'alerta', '📝': 'nota', '🥇': 'oro', '🥈': 'plata', '🥉': 'bronce', '👻': 'fantasma', '❌': 'tachar', '🏷': 'etiqueta', '🎀': 'lazo', '🔼': 'arriba', '🔽': 'abajo', '✖': 'equis', '✨': 'destellos', '📋': 'portapapeles', '◀': 'izquierda', '▶': 'derecha', '🔔': 'campana'
+};
+const MAPA = Object.fromEntries(Object.entries(ICONOS).map(([e, n]) => [e.replace(/\uFE0F/g, ''), n]));
+const RE_ICONO = new RegExp('(' + Object.keys(MAPA).join('|') + ')\\uFE0F?', 'gu');
+
+function iconizar(raiz = document.body) {   // envuelve cada emoji del texto: <span class="ico"> emoji + dibujo SVG </span>
+  const w = document.createTreeWalker(raiz, NodeFilter.SHOW_TEXT), nodos = [];
+  for (let n; (n = w.nextNode());) {
+    // no se tocan los textos que escriben los jueces (comentarios y descripción)
+    if (n.nodeValue.match(RE_ICONO) && !n.parentElement.closest('.ico,.com,.desc,textarea,script,style')) nodos.push(n);
+  }
+  nodos.forEach(n => {
+    const caja = document.createElement('template');
+    caja.innerHTML = n.nodeValue.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(RE_ICONO, (m, e) =>
+      `<span class="ico"><span class="e">${m}</span><svg class="s" viewBox="0 0 24 24" aria-hidden="true">${DIBUJOS[MAPA[e]]}</svg></span>`);
+    n.replaceWith(caja.content);
+  });
+}
+iconizar();                                  // textos que ya están en la página
+
+/* ---------- 4. RECORTE DE FOTO ---------- */
+// El recorte se guarda en proporciones de la foto (0 a 1): así se repite igual en fotos del mismo tamaño.
+const lienzo = $('#lienzo'), ctx = lienzo.getContext('2d');
+ctx.imageSmoothingQuality = 'high';
+const C_AVATAR = {img: null, sx: 0, sy: 0, sw: 0}, C_JUEZ = {img: null, sx: 0, sy: 0, sw: 0};   // esquina (sx, sy) y ancho (sw) del recorte en píxeles de la foto original
+let C = C_AVATAR;                            // el recorte que se está usando ahora
+const anchoMax = () => Math.min(C.img.width, C.img.height / ASPECTO);
+
+function limitarRecorte() {
+  C.sx = Math.min(Math.max(C.sx, 0), C.img.width - C.sw);
+  C.sy = Math.min(Math.max(C.sy, 0), C.img.height - C.sw * ASPECTO);
+}
+function dibujarRecorte() {
+  ctx.drawImage(C.img, C.sx, C.sy, C.sw, C.sw * ASPECTO, 0, 0, lienzo.width, lienzo.height);
+}
+function recorteCentrado(img) {
+  C.img = img; C.sw = anchoMax();
+  C.sx = (img.width - C.sw) / 2; C.sy = (img.height - C.sw * ASPECTO) / 2; limitarRecorte();
+}
+function recorteGuardado(img, r) {
+  C.img = img; C.sw = Math.min(r.w * img.width, anchoMax());
+  C.sx = r.x * img.width; C.sy = r.y * img.height; limitarRecorte();
+}
+let alRecortar = null;                       // si tiene una función, el recorte es para la foto de un juez (cuadrada)
+function ponerModoRecorte(juez) {            // avatars: vertical 3:4 · jueces: cuadrada 1:1
+  C = juez ? C_JUEZ : C_AVATAR;
+  ASPECTO = juez ? 1 : 4 / 3;
+  lienzo.height = Math.round(lienzo.width * ASPECTO);   // cambiar el tamaño del lienzo lo borra: después se vuelve a dibujar
+  ctx.imageSmoothingQuality = 'high';
+}
+function salidaRecorte() {                   // la foto final sale con la mayor calidad posible (hasta un tope)
+  const w = Math.round(Math.min(C.sw, alRecortar ? 640 : 1600)), h = Math.round(w * ASPECTO);
+  const hoja = document.createElement('canvas');
+  hoja.width = w; hoja.height = h;
+  const c2 = hoja.getContext('2d');
+  c2.imageSmoothingQuality = 'high';
+  c2.drawImage(C.img, C.sx, C.sy, C.sw, C.sw * ASPECTO, 0, 0, w, h);
+  return hoja.toDataURL('image/jpeg', 0.95);
+}
+function abrirRecorte(cb = null) {
+  alRecortar = cb;
+  ponerModoRecorte(!!cb);
+  $('#zoom').value = anchoMax() / C.sw;
+  $('#recordar').checked = !!(cb ? state.recordarJuez : state.recordar);
+  $('#tituloRecorte').textContent = cb ? 'Foto del juez (cuadrada)' : 'Recorta la foto del avatar';
+  $('#textoRecordar').textContent = cb ? 'Usar este mismo recorte en las próximas fotos de jueces' : 'Usar este mismo recorte en las próximas fotos de avatars';
+  dibujarRecorte(); $('#dlgRecorte').showModal();
+}
+function usarRecorte() {                     // el recorte pasa a ser la foto del avatar
+  form.foto = salidaRecorte();
+  pintarFoto();
+}
+function elegirArchivo(file, cb = null) {
+  const img = new Image();
+  img.onload = () => {
+    const juez = !!cb, recuerda = juez ? state.recordarJuez : state.recordar, guardado = juez ? state.recorteJuez : state.recorte;
+    alRecortar = cb; ponerModoRecorte(juez);
+    if (!juez) srcImg = img;
+    if (recuerda && guardado) {              // repite el recorte anterior sin preguntar
+      recorteGuardado(img, guardado);
+      if (juez) cb(salidaRecorte()); else usarRecorte();
+      aviso(juez ? '✂️ Se usó el mismo recorte de la foto anterior de jueces' : '✂️ Se usó el mismo recorte de la foto anterior');
+    } else { recorteCentrado(img); abrirRecorte(cb); }
+  };
+  img.onerror = () => aviso('No se pudo abrir esa imagen');
+  img.src = URL.createObjectURL(file);
+}
+
+let arrastre = null;                         // arrastrar la imagen con el dedo o el mouse
+lienzo.onpointerdown = e => { arrastre = e; lienzo.setPointerCapture(e.pointerId); };
+lienzo.onpointermove = e => {
+  if (!arrastre) return;
+  const f = C.sw / lienzo.getBoundingClientRect().width;   // píxeles de foto por píxel de pantalla
+  C.sx -= (e.clientX - arrastre.clientX) * f; C.sy -= (e.clientY - arrastre.clientY) * f;
+  arrastre = e; limitarRecorte(); dibujarRecorte();
+};
+lienzo.onpointerup = lienzo.onpointercancel = () => arrastre = null;
+$('#zoom').oninput = e => {
+  const cx = C.sx + C.sw / 2, cy = C.sy + C.sw * ASPECTO / 2;
+  C.sw = anchoMax() / e.target.value;
+  C.sx = cx - C.sw / 2; C.sy = cy - C.sw * ASPECTO / 2;
+  limitarRecorte(); dibujarRecorte();
+};
+$('#cancelarRecorte').onclick = () => $('#dlgRecorte').close();
+$('#aceptarRecorte').onclick = () => {
+  const juez = !!alRecortar;
+  const [recuerda, recorte] = juez ? ['recordarJuez', 'recorteJuez'] : ['recordar', 'recorte'];
+  state[recuerda] = $('#recordar').checked;
+  if (state[recuerda]) state[recorte] = {x: C.sx / C.img.width, y: C.sy / C.img.height, w: C.sw / C.img.width};
+  guardarEstado();
+  if (juez) alRecortar(salidaRecorte()); else usarRecorte();
+  $('#dlgRecorte').close();
+};
+
+/* ---------- 5. PANTALLA "CALIFICAR" ---------- */
+function formVacio() {
+  return {id: null, nombre: '', gamertag: '', desc: '', cats: [], foto: '', jueces: {}, extra: [], abiertos: {}, eligioGeneral: false};
+}
+// jueces: puntajes por id de juez · extra: puntajes de jueces que ya no están en el panel (solo al editar)
+const entrada = id => form.jueces[id] ||= {pts: '', pos: '', neg: '', neu: ''};
+const entradas = () => [...panel().map(p => ({...entrada(p.id), jid: p.id, nom: p.nombre})), ...form.extra];
+
+function pintarFormulario() {
+  $('#tituloForm').textContent = form.id ? 'Paso 1: Editando avatar' : 'Paso 1: Nuevo avatar';
+  $('#nombre').value = form.nombre;
+  $('#gamertag').value = form.gamertag;
+  $('#desc').value = form.desc;
+  $('#nombre').classList.remove('mal'); $('#foto').classList.remove('mal');
+  $('#gamertag').closest('details').open = !!form.gamertag;
+  $('#detClase').open = !!state.opc.claseAbierta;      // plegada o desplegada, según Ajustes
+  pintarClaseForm(); pintarFoto(); pintarJueces();
+}
+
+function pintarClaseForm() {                 // selector de clases del registro (contraíble): el resumen se ve aunque esté plegado
+  const elegidas = form.eligioGeneral ? ['General'] : (form.cats || []);
+  $('#resumenClase').textContent = '🏷️ Clase: ' + (elegidas.length ? elegidas.join(', ') : 'sin elegir');
+  $('#chipsClase').innerHTML = state.clases.map(c => {
+    const marcada = c === 'General' ? form.eligioGeneral : (form.cats || []).includes(c);
+    return `<button class="chip ${marcada ? 'on' : ''}" data-c="${esc(c)}">${ICONO[c] ?? ''} ${esc(c)}</button>`;
+  }).join('');
+  $('#notaClase').textContent = (state.opc.preguntarSec ? 'Si no eliges ninguna, te la pregunto al guardar.' : 'Si no eliges ninguna, se guarda solo en General.') + ' Todos los avatars aparecen también en General.';
+  iconizar($('#detClase'));
+}
+function pintarFoto() {
+  const f = $('#foto');
+  f.style.backgroundImage = form.foto ? `url('${form.foto}')` : '';
+  f.classList.toggle('llena', !!form.foto);
+  if (form.foto) f.classList.remove('mal');
+  f.textContent = form.foto ? '' : '📷 Toca aquí para elegir la foto (obligatoria)';
+  iconizar(f);
+  $('#pieFoto').textContent = form.foto ? 'Toca la foto para cambiarla' : '';
+  $('#btnRecorte').hidden = !(srcImg && form.foto);
+  guardarBorrador();
+}
+function pintarJueces() {
+  const compacto = state.opc.compacto;       // true = comentarios contraídos: cada juez ocupa una sola fila
+  $('#jueces').innerHTML = panel().map((p, i, todos) => {
+    const e = entrada(p.id), abierto = !compacto || form.abiertos?.[p.id];
+    return `
+    <div class="card juez ${compacto ? 'compacto' : ''}" data-j="${p.id}">
+      <div class="juez-top">
+        ${quienEs(p.id, p.nombre)}
+        <input type="text" class="pts" inputmode="decimal" enterkeyhint="${state.opc.enterPuntaje && i === todos.length - 1 ? 'done' : 'next'}" placeholder="0 a 10" value="${esc(e.pts)}" data-k="pts" aria-label="Puntaje de ${esc(p.nombre)}">
+        ${compacto ? `<button class="mini-btn ${e.pos || e.neg || e.neu ? 'on' : ''}" data-abrir="${p.id}" aria-label="Comentarios de ${esc(p.nombre)}">💬</button>` : ''}
+      </div>
+      ${abierto ? `
+      <label>👍 Comentario positivo</label><textarea rows="2" data-k="pos">${esc(e.pos)}</textarea>
+      <label>👎 Comentario negativo <span class="opt">(opcional)</span></label><textarea rows="2" data-k="neg">${esc(e.neg)}</textarea>
+      <label>😐 Comentario neutro <span class="opt">(opcional)</span></label><textarea rows="2" data-k="neu">${esc(e.neu)}</textarea>` : ''}
+    </div>`;
+  }).join('');
+  iconizar($('#jueces'));
+  $('#btnComentarios').innerHTML = compacto ? '💬 Mostrar comentarios' : '💬 Ocultar comentarios';
+  iconizar($('#btnComentarios'));
+  actualizarPromedio();
+}
+function ponerCompacto(v) {                  // un toque: contrae o muestra los comentarios de TODOS los jueces
+  state.opc.compacto = v; form.abiertos = {};
+  guardarEstado(); pintarJueces();
+}
+function actualizarPromedio() {
+  const p = promedio(entradas());
+  $('#promedio').textContent = p === null ? '—' : p.toFixed(2);
+  guardarBorrador();
+}
+let tBorrador = null;
+const hayBorrador = () => form.nombre || form.gamertag || form.desc || form.foto || entradas().some(j => j.pts !== '' || j.pos || j.neg || j.neu);
+function guardarBorrador() {                 // guarda lo que se está llenando, por si se cierra la app a medias
+  if (!state.opc.borrador) return;
+  clearTimeout(tBorrador);
+  tBorrador = setTimeout(() => Almacen.guardar(hayBorrador() ? form : null, 'borrador'), 800);
+}
+function limpiarFormulario() {
+  form = formVacio(); srcImg = null;
+  clearTimeout(tBorrador); Almacen.guardar(null, 'borrador');
+  pintarFormulario();
+}
+
+function guardarAvatar() {
+  const nombre = form.nombre.trim();
+  const faltan = [!nombre && 'el nombre', !form.foto && 'la foto'].filter(Boolean);
+  $('#nombre').classList.toggle('mal', !nombre);
+  $('#foto').classList.toggle('mal', !form.foto);
+  if (faltan.length) {                       // sin nombre y foto no se puede guardar
+    (nombre ? $('#foto') : $('#nombre')).scrollIntoView({block: 'center', behavior: 'smooth'});
+    return aviso('✏️ Falta ' + faltan.join(' y ') + ' del avatar');
+  }
+  const avg = promedio(entradas());
+  if (avg === null) return aviso('✏️ Pon al menos un puntaje de 0 a 10');
+  const gt = form.gamertag.trim().toLowerCase();                  // ¿ya existe uno igual?
+  const repetido = state.avatars.find(a => a.id !== form.id && (a.nombre.toLowerCase() === nombre.toLowerCase() || (gt && a.gamertag.toLowerCase() === gt)));
+  if (repetido && form.repetidoOk !== repetido.id) {
+    form.repetidoOk = repetido.id;
+    return aviso(`⚠️ Ya existe "${repetido.nombre}". Toca Guardar otra vez para guardarlo igual`);
+  }
+  if ((form.cats || []).length || form.eligioGeneral) return guardarEn(form.cats || []);   // ya la eligió en el registro: se guarda directo
+  if (state.opc.preguntarSec) return preguntarClases(guardarEn);   // última ventana: elegir la sección con un toque
+  guardarEn(form.cats || []);                        // sin ventana: todo a General (o la sección que ya tenía)
+}
+function guardarEn(cats) {
+  const nombre = form.nombre.trim(), avg = promedio(entradas());
+  const avatar = {
+    id: form.id || Date.now().toString(36), nombre, gamertag: form.gamertag.trim(), desc: form.desc.trim(),
+    cats: (cats || []).filter(c => c !== 'General' && state.clases.includes(c)), foto: form.foto, avg, tachado: !!state.avatars.find(x => x.id === form.id)?.tachado,
+    jueces: entradas().map(j => ({jid: j.jid, nom: j.nom, pts: num(j.pts), pos: j.pos.trim(), neg: j.neg.trim(), neu: j.neu.trim()}))
+      .filter(j => j.pts !== null || j.pos || j.neg || j.neu)
+  };
+  state.historial = state.historial.filter(h => h.aid !== avatar.id);            // el progreso de los jueces se actualiza con cada guardado
+  avatar.jueces.forEach(j => { if (j.pts !== null) state.historial.push({aid: avatar.id, jid: j.jid, pts: j.pts, dif: j.pts - avg}); });
+  const k = state.avatars.findIndex(a => a.id === avatar.id);
+  if (k >= 0) state.avatars[k] = avatar; else state.avatars.push(avatar);
+  guardarEstado(); limpiarFormulario();
+  if (state.opc.carnet) abrirCarnet(avatar.id, true);
+  else aviso(`✅ ${nombre} guardado: puesto #${ordenados('General').find(x => x.id === avatar.id).pos} en General`);
+}
+function preguntarClases(alElegir) {         // última ventana: un toque para elegir la clase (o varias)
+  const previas = form.cats || [], elegidas = new Set(previas);
+  let varias = previas.length > 1;
+  const abrir = () => abrirDialogo(`
+    <h2>¿En qué clase lo guardo?</h2>
+    <p class="ayuda izq">Todos los avatars aparecen también en General.${varias ? ' Toca las clases que quieras y luego Guardar.' : ''}</p>
+    <div class="secciones">${state.clases.map(c => {
+      const marcada = (varias || form.id) && (c === 'General' ? !elegidas.size : elegidas.has(c));
+      return `<button class="opcion ${marcada ? 'on' : ''}" data-r="${esc(c)}">${ICONO[c]} ${esc(c)}</button>`;
+    }).join('')}</div>
+    ${varias ? '<button class="btn" data-r="__guardar" style="width:100%;margin-top:.75rem">Guardar</button>' : ''}
+    <button class="link cancelar" data-r="__varias">${varias ? 'Elegir solo una' : 'Elegir varias clases'}</button>`, r => {
+    if (r === '__varias') { varias = !varias; abrir(); return false; }
+    if (r === '__guardar') return alElegir([...elegidas]);
+    if (!varias) return alElegir(r === 'General' ? [] : [r]);
+    if (r === 'General') elegidas.clear(); else if (elegidas.has(r)) elegidas.delete(r); else elegidas.add(r);
+    abrir(); return false;
+  });
+  abrir();
+}
+function editarAvatar(id) {
+  const a = state.avatars.find(x => x.id === id), activos = panel().map(p => p.id);
+  form = formVacio();
+  Object.assign(form, {id: a.id, nombre: a.nombre, gamertag: a.gamertag, desc: a.desc || '', cats: [...(a.cats || [])], eligioGeneral: !(a.cats || []).length, foto: a.foto});
+  a.jueces.forEach(j => activos.includes(j.jid) ? form.jueces[j.jid] = {pts: j.pts ?? '', pos: j.pos, neg: j.neg, neu: j.neu} : form.extra.push(j));
+  srcImg = null; irA('calificar'); pintarFormulario();
+}
+
+$('#foto').onclick = () => $('#archivo').click();
+$('#archivo').onchange = e => { const f = e.target.files[0]; if (f) elegirArchivo(f); e.target.value = ''; };
+$('#btnRecorte').onclick = () => abrirRecorte();
+$('#nombre').oninput = e => { form.nombre = e.target.value; e.target.classList.remove('mal'); guardarBorrador(); };
+$('#gamertag').oninput = e => { form.gamertag = e.target.value; guardarBorrador(); };
+$('#desc').oninput = e => { form.desc = e.target.value; guardarBorrador(); };
+$('#guardar').onclick = guardarAvatar;
+$('#jueces').addEventListener('keydown', e => {      // Enter en un puntaje: pasa al puntaje del siguiente juez (Mayús + Enter: al anterior)
+  if (e.key !== 'Enter' || !e.target.classList.contains('pts') || !state.opc.enterPuntaje) return;
+  e.preventDefault();
+  const campos = [...document.querySelectorAll('#jueces .pts')], destino = campos[campos.indexOf(e.target) + (e.shiftKey ? -1 : 1)];
+  if (destino) destino.focus(); else e.target.blur();
+});
+$('#jueces').addEventListener('focusin', e => { if (e.target.classList.contains('pts')) e.target.select(); });   // al tocar un puntaje se selecciona: lo que escribes lo reemplaza
+$('#chipsClase').onclick = e => {                  // marcar o desmarcar clases en el registro
+  const b = e.target.closest('.chip');
+  if (!b) return;
+  const c = b.dataset.c, cats = form.cats || [];
+  if (c === 'General') { form.cats = []; form.eligioGeneral = !form.eligioGeneral; }
+  else { form.eligioGeneral = false; form.cats = cats.includes(c) ? cats.filter(x => x !== c) : [...cats, c]; }
+  guardarBorrador(); pintarClaseForm();
+};
+$('#irJueces').onclick = () => irA('equipo');
+$('#btnComentarios').onclick = () => ponerCompacto(!state.opc.compacto);
+$('#jueces').addEventListener('click', e => {        // 💬: abre los comentarios de un solo juez (modo compacto)
+  const b = e.target.closest('[data-abrir]');
+  if (!b) return;
+  const id = b.dataset.abrir, abiertos = form.abiertos ||= {};
+  abiertos[id] = !abiertos[id];
+  pintarJueces();
+  if (abiertos[id]) $(`#jueces [data-j="${id}"] textarea`)?.focus();
+});
+dosToques($('#limpiar'), limpiarFormulario);
+$('#jueces').addEventListener('input', e => {        // cada letra o número queda en "form"
+  const k = e.target.dataset.k;
+  if (!k) return;
+  entrada(e.target.closest('.juez').dataset.j)[k] = e.target.value;
+  actualizarPromedio();
+});
+$('#jueces').addEventListener('change', e => {       // "5,7" pasa a 5.7 y se limita de 0 a 10
+  if (e.target.dataset.k !== 'pts') return;
+  const n = num(e.target.value);
+  e.target.value = entrada(e.target.closest('.juez').dataset.j).pts = n === null ? '' : n;
+  actualizarPromedio();
+});
+
+/* ---------- 6. PANTALLA "RANKING" ---------- */
+function ordenados(cat) {                    // avatars de una sección con su puesto; "General" incluye a todos (los empates comparten puesto)
+  const l = state.avatars.filter(a => cat === 'General' || (a.cats || []).includes(cat))
+    .sort((a, b) => b.avg - a.avg || a.nombre.localeCompare(b.nombre));
+  let pos = 0;
+  return l.map((a, i) => { if (i === 0 || a.avg !== l[i - 1].avg) pos = i + 1; return {...a, pos}; });
+}
+function pintarRanking() {
+  if (!state.clases.includes(filtro)) filtro = 'General';
+  pintarChips($('#chipsFiltro'), state.clases, filtro, c => { filtro = c; pintarRanking(); });
+  pintarChips($('#chipsOrden'), ['Puntaje', 'Recientes', 'A–Z'], orden, o => { orden = o; pintarRanking(); });
+  const q = $('#buscar').value.trim().toLowerCase();
+  const todos = ordenados(filtro);
+  $('#filaTachados').hidden = !state.avatars.some(a => a.tachado);
+  $('#limpiarBusqueda').hidden = !q;
+  const lista = todos.filter(a => (a.nombre + ' ' + a.gamertag).toLowerCase().includes(q) && !(ocultarTachados && a.tachado));
+  const cuenta = n => `${n} avatar${n === 1 ? '' : 's'}`;
+  $('#contarRanking').textContent = lista.length === todos.length ? cuenta(todos.length) : `${lista.length} de ${cuenta(todos.length)}`;
+  if (orden === 'Recientes') lista.sort((a, b) => parseInt(b.id, 36) - parseInt(a.id, 36));   // el puesto no cambia, solo el orden de la lista
+  if (orden === 'A–Z') lista.sort((a, b) => a.nombre.localeCompare(b.nombre));
+  ultimaLista = lista;                        // lo que se ve ahora: sirve para pasar de un carnet al siguiente
+  $('#lista').innerHTML = lista.length ? lista.map(a => `
+    <div class="fila-wrap ${a.tachado ? 'tachado' : ''}">
+    <button class="fila" data-id="${a.id}">
+      <span class="pos">${['🥇', '🥈', '🥉'][a.pos - 1] || a.pos}</span>
+      <span class="mini" ${fondo(a.foto)}>${a.foto ? '' : '🙂'}</span>
+      <span><b>${esc(a.nombre)}</b><small>${a.gamertag ? `<span>@${esc(a.gamertag)}</span>` : ''}${(a.cats?.length ? a.cats : ['General']).map(c => `<span>${ICONO[c]} ${esc(c)}</span>`).join('')}</small></span>
+      <span class="nota">${a.avg.toFixed(2)}</span>
+    </button>
+    <button class="tachar" data-tachar="${a.id}" aria-label="${a.tachado ? 'Quitar tachado' : 'Tachar (se fue)'}" title="${a.tachado ? 'Quitar tachado' : 'Tachar (se fue)'}">${a.tachado ? '↩️' : '❌'}</button>
+    </div>`).join('')
+    : `<p class="vacio">${state.avatars.length ? 'No encontramos a nadie con ese nombre 🤔' : 'Aún no hay avatars calificados.<br>Ve a ✍️ Calificar para añadir el primero.'}</p>`;
+  iconizar($('#lista'));
+}
+$('#buscar').oninput = pintarRanking;
+$('#copiarRanking').onclick = copiarRanking;
+$('#limpiarBusqueda').onclick = () => { $('#buscar').value = ''; pintarRanking(); $('#buscar').focus(); };
+$('#ocultarTachados').onchange = e => { ocultarTachados = e.target.checked; pintarRanking(); };
+async function copiarTexto(texto) {          // copia al portapapeles (con un plan B por si el navegador no deja)
+  let ok = false;
+  try { await navigator.clipboard.writeText(texto); ok = true; }
+  catch (e) {
+    const t = document.createElement('textarea');
+    t.value = texto; t.style.cssText = 'position:fixed;opacity:0';
+    document.body.appendChild(t); t.select();
+    try { ok = document.execCommand('copy'); } catch (e2) { ok = false; }
+    t.remove();
+  }
+  aviso(ok ? '📋 Copiado' : 'No se pudo copiar');
+}
+function copiarRanking() {                   // el ranking tal como se ve ahora (con su filtro y búsqueda), listo para pegar
+  const lineas = ultimaLista.map(a => `${a.pos}. ${a.nombre} - ${a.avg.toFixed(2)}${a.tachado ? ' (se fue)' : ''}`);
+  if (!lineas.length) return aviso('No hay nada que copiar');
+  copiarTexto(`Ranking ${filtro}\n${lineas.join('\n')}`);
+}
+function alternarTachado(id) {               // tacha (se fue) o quita el tachado; el avatar conserva su puesto
+  const a = state.avatars.find(x => x.id === id);
+  a.tachado = !a.tachado;
+  guardarEstado(); pintarRanking();
+  aviso(a.tachado ? `❌ ${a.nombre} quedó tachado` : `↩️ ${a.nombre} ya no está tachado`);
+}
+$('#lista').onclick = e => {
+  const t = e.target.closest('[data-tachar]');
+  if (t) return alternarTachado(t.dataset.tachar);
+  const b = e.target.closest('[data-id]');
+  if (b) abrirCarnet(b.dataset.id);
+};
+
+/* ---------- 7. CARNET (perfil del avatar) ---------- */
+const comentario = (clase, icono, texto) => texto ? `<div class="com ${clase}">${icono} ${esc(texto)}</div>` : '';
+
+let ultimaLista = [];                        // lo que se ve ahora en el ranking: sirve para pasar de un carnet al siguiente
+
+function abrirCarnet(id, recienGuardado = false) {
+  const general = ordenados('General'), a = general.find(x => x.id === id);   // "General" incluye a todos los avatars
+  const porClase = (a.cats || []).map(c => { const l = ordenados(c); return {c, pos: l.find(x => x.id === id).pos, total: l.length}; });
+  const puntos = a.jueces.map(j => j.pts).filter(p => p !== null), n = puntos.length;
+  const ids = (ultimaLista.some(x => x.id === id) ? ultimaLista : general).map(x => x.id);
+  const k = ids.indexOf(id), antes = ids[k - 1] || '', despues = ids[k + 1] || '';
+  $('#carnet').dataset.antes = antes; $('#carnet').dataset.despues = despues;
+  $('#carnet').innerHTML = `
+    <div class="carnet-barra">
+      <div class="carnet-nav">
+        <button class="mini-btn" id="cAnterior" aria-label="Avatar anterior" ${antes ? '' : 'disabled'}>◀️</button>
+        <span class="opt cnt">${k + 1} de ${ids.length}</span>
+        <button class="mini-btn" id="cSiguiente" aria-label="Avatar siguiente" ${despues ? '' : 'disabled'}>▶️</button>
+      </div>
+      <button class="mini-btn" id="cX" aria-label="Cerrar">✖</button>
+    </div>
+    ${recienGuardado ? `<div class="banner">✅ ¡Guardado! Puesto #${a.pos} en General${porClase.map(x => `, #${x.pos} en ${esc(x.c)}`).join('')}</div>` : ''}
+    <div class="carnet-top">
+      <div class="marco">
+        <div class="carnet-foto" ${fondo(a.foto)}>${a.foto ? '' : '🙂'}</div>
+        ${a.pos <= 3 ? `<div class="medalla">${['🥇', '🥈', '🥉'][a.pos - 1]}</div>` : ''}
+        <div class="sello" title="Promedio">${a.avg.toFixed(2)}</div>
+      </div>
+      <h2>${esc(a.nombre)}</h2>
+      ${a.gamertag ? `<div class="gt">@${esc(a.gamertag)}</div>` : ''}
+      <div class="pills">${(a.cats?.length ? a.cats : ['General']).map(c => `<span class="pill">${ICONO[c]} ${esc(c)}</span>`).join('')}</div>
+      <div class="datos">
+        <div><b>#${a.pos}</b><small>de ${general.length} en General</small></div>
+        <div><b>${n}</b><small>juez${n === 1 ? '' : 'es'}</small></div>
+        <div><b>${n ? Math.min(...puntos) + '–' + Math.max(...puntos) : '—'}</b><small>mínimo y máximo</small></div>
+      </div>
+      ${porClase.length ? `<div class="pills">${porClase.map(x => `<span class="pill suave">${ICONO[x.c]} #${x.pos} de ${x.total} en ${esc(x.c)}</span>`).join('')}</div>` : ''}
+      ${a.tachado ? '<div class="se-fue">❌ Se fue: está tachado en el ranking</div>' : ''}
+      <button class="link" id="cTachar">${a.tachado ? 'Quitar tachado' : 'Tachar (se fue)'}</button>
+      ${a.desc ? `<p class="desc">💬 ${esc(a.desc)}</p>` : ''}
+    </div>
+    <div class="jscroll">${a.jueces.map(j => `
+      <div class="jrow">
+        <div class="jhead">${quienEs(j.jid, j.nom)}<span class="badge">${j.pts ?? '—'}</span></div>
+        ${j.pts !== null ? `<div class="medidor"><i style="width:${j.pts * 10}%"></i></div>` : ''}
+        ${comentario('ok', '👍', j.pos)}${comentario('bad', '👎', j.neg)}${comentario('neu', '😐', j.neu)}
+      </div>`).join('')}</div>
+    ${recienGuardado ? '<button class="link" id="cRanking">🏆 Ver ranking completo</button>' : ''}
+    <div class="carnet-acciones">
+      <button class="btn sec" id="cEditar">✏️ Editar</button>
+      <button class="btn sec" id="cBorrar">🗑️ Eliminar</button>
+      <button class="btn" id="cCerrar">${recienGuardado ? '➕ Calificar otro' : 'Cerrar'}</button>
+    </div>`;
+  iconizar($('#carnet'));
+  $('#cX').onclick = $('#cCerrar').onclick = () => $('#dlgCarnet').close();
+  $('#cAnterior').onclick = () => abrirCarnet(antes);
+  $('#cSiguiente').onclick = () => abrirCarnet(despues);
+  $('#cTachar').onclick = () => { alternarTachado(id); abrirCarnet(id, recienGuardado); };
+  $('#cEditar').onclick = () => { $('#dlgCarnet').close(); editarAvatar(id); };
+  dosToques($('#cBorrar'), () => borrarAvatar(id));
+  if (recienGuardado) $('#cRanking').onclick = () => { $('#dlgCarnet').close(); irA('ranking'); };
+  if (a.foto) {                              // la foto no se muestra más grande de lo que permite su resolución (así no se ve borrosa)
+    const im = new Image();
+    im.onload = () => { const m = $('#carnet .marco'); if (m) m.style.maxWidth = Math.round(im.naturalWidth * 0.75) + 'px'; };
+    im.src = a.foto;
+  }
+  if (!$('#dlgCarnet').open) $('#dlgCarnet').showModal();
+  $('#dlgCarnet').scrollTop = 0;
+}
+function borrarAvatar(id) {                  // se puede deshacer unos segundos
+  const avatar = state.avatars.find(a => a.id === id), historial = state.historial.filter(h => h.aid === id);
+  state.avatars = state.avatars.filter(a => a.id !== id);
+  state.historial = state.historial.filter(h => h.aid !== id);
+  guardarEstado(); $('#dlgCarnet').close(); pintarRanking();
+  aviso('🗑️ Avatar eliminado', {etiqueta: 'Deshacer', fn: () => {
+    state.avatars.push(avatar); state.historial.push(...historial);
+    guardarEstado(); pintarRanking(); aviso('↩️ Avatar recuperado');
+  }});
+}
+
+/* ---------- 8. PANTALLA "JUECES" ---------- */
+// Cada juez: {id, nombre, foto, estado: 'activo' | 'archivado', por: id del juez que lo reemplazó (o null)}
+const panel = () => state.jueces.filter(j => j.estado === 'activo');
+const juezDe = id => state.jueces.find(j => j.id === id);
+const nuevoId = () => 'j' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
+const quienEs = (id, nom) => {               // foto + nombre; si el juez ya no existe usa el nombre guardado
+  const q = juezDe(id);
+  return `<span class="jtit"><span class="jf" ${fondo(q?.foto)}>${q?.foto ? '' : '👤'}</span><b>${esc(q?.nombre || nom)}</b></span>`;
+};
+
+function migrar() {                          // datos de versiones anteriores: los jueces eran solo "Juez 1, 2, 3..."
+  if (state.jueces) return;
+  const n = Math.max(state.nJueces, ...state.avatars.map(a => a.jueces.length));
+  state.jueces = Array.from({length: n}, (_, i) => ({id: 'j' + (i + 1), nombre: state.nombres[i], foto: '', estado: 'activo', por: null}));
+  state.avatars.forEach(a => a.jueces.forEach((j, i) => { j.jid = 'j' + (i + 1); j.nom = state.nombres[i]; }));
+}
+function estadisticas(id) {                  // cómo califica un juez frente a los demás (acumulado de todas sus calificaciones)
+  const v = state.historial.filter(h => h.jid === id);
+  if (!v.length) return null;
+  const media = k => v.reduce((t, x) => t + x[k], 0) / v.length;
+  const pts = v.map(x => x.pts);
+  return {n: v.length, prom: media('pts'), dif: media('dif'), min: Math.min(...pts), max: Math.max(...pts)};
+}
+function cambioEquipo(msg) {                 // guarda y refresca todo lo que muestra jueces
+  guardarEstado(); pintarEquipo(); pintarJueces();
+  if (msg) aviso(msg);
+}
+function pintarEquipo() {
+  const activos = panel();
+  $('#contJueces').textContent = `Jueces: ${activos.length} de ${MAX_JUECES}`;
+  $('#listaJueces').innerHTML = activos.map((p, i) => {
+    const s = estadisticas(p.id);
+    const veredicto = !s ? 'Aún no ha calificado a nadie'
+      : s.n < 3 ? 'Con 3 avatars sabremos si es estricto o suave'
+      : s.dif <= -0.5 ? '😠 Estricto' : s.dif >= 0.5 ? '😊 Suave' : '⚖️ Equilibrado';
+    return `
+    <div class="card" data-id="${p.id}">
+      <div class="juez-top">
+        <button class="jf gr" data-a="foto" ${fondo(p.foto)} aria-label="Cambiar foto">${p.foto ? '' : '📷'}</button>
+        <input type="text" class="jn" value="${esc(p.nombre)}" maxlength="30" aria-label="Nombre del juez">
+        <button class="mini-btn" data-a="subir" aria-label="Subir" ${i === 0 ? 'disabled' : ''}>🔼</button><button class="mini-btn" data-a="bajar" aria-label="Bajar" ${i === activos.length - 1 ? 'disabled' : ''}>🔽</button>
+      </div>
+      ${s ? `<div class="stats"><div><b>${s.n}</b><small>avatars</small></div><div><b>${s.prom.toFixed(1)}</b><small>promedio que da</small></div><div><b>${s.min}–${s.max}</b><small>mínimo y máximo</small></div></div>
+      <div class="medidor"><i style="width:${s.prom * 10}%"></i></div>` : ''}
+      <div class="veredicto">${veredicto}${s && s.n >= 3 ? `<small>${s.dif > 0 ? '+' : ''}${s.dif.toFixed(1)} frente al promedio de cada avatar</small>` : ''}</div>
+      <div class="acciones"><button class="btn sec" data-a="reemplazar">🔄 Reemplazar</button><button class="btn sec" data-a="quitar">📦 Quitar</button></div>
+    </div>`;
+  }).join('');
+  const todosArchivados = state.jueces.filter(j => j.estado === 'archivado'), q = $('#buscarArchivo').value.trim().toLowerCase();
+  const archivados = todosArchivados.filter(j => j.nombre.toLowerCase().includes(q))
+    .sort(ordenArchivo === 'A–Z' ? (a, b) => a.nombre.localeCompare(b.nombre) : (a, b) => (b.archivadoEn || 0) - (a.archivadoEn || 0));   // Recientes: el último que archivaste va primero
+  $('#contArchivados').textContent = todosArchivados.length ? `(${todosArchivados.length})` : '';
+  $('#cajaBuscarArchivo').hidden = todosArchivados.length < 5;
+  $('#chipsOrdenArchivo').hidden = todosArchivados.length < 2;
+  pintarChips($('#chipsOrdenArchivo'), ['Recientes', 'A–Z'], ordenArchivo, o => { ordenArchivo = o; pintarEquipo(); });
+  $('#listaArchivo').innerHTML = archivados.map(a => `
+    <div class="card fila-arch" data-id="${a.id}">
+      <span class="jf" ${fondo(a.foto)}>${a.foto ? '' : '👤'}</span>
+      <div><b>${esc(a.nombre)}</b><small>${juezDe(a.por) ? 'Reemplazado por ' + esc(juezDe(a.por).nombre) : 'Quitado temporalmente'}${a.archivadoEn ? ', ' + new Date(a.archivadoEn).toLocaleDateString('es', {day: 'numeric', month: 'short'}) : ''}</small></div>
+      <button class="btn sec" data-a="reintegrar">↩️ Reintegrar</button>
+      <button class="btn sec" data-a="borrar" aria-label="Borrar para siempre">🗑️</button>
+    </div>`).join('') || (q ? '<p class="vacio">Ningún archivado con ese nombre</p>' : '');
+  iconizar($('#equipo'));
+  document.querySelectorAll('#listaArchivo [data-a=borrar]').forEach(b => dosToques(b, () => borrarJuez(b.closest('[data-id]').dataset.id)));
+}
+
+function abrirDialogo(html, alElegir) {      // ventana con opciones: si alElegir devuelve false, no se cierra
+  const c = $('#cuerpoJuez');
+  c.innerHTML = html + '<button class="link cancelar" data-r="">Cancelar</button>';
+  iconizar(c);
+  c.onclick = e => {
+    const b = e.target.closest('[data-r]');
+    if (b && (!b.dataset.r || alElegir(b.dataset.r) !== false)) $('#dlgJuez').close();
+  };
+  if (!$('#dlgJuez').open) $('#dlgJuez').showModal();
+}
+function quitarJuez(id) {                    // lo manda al archivo, sin reemplazo
+  if (panel().length <= 1) return aviso('Debe quedar al menos 1 juez');
+  Object.assign(juezDe(id), {estado: 'archivado', por: null, archivadoEn: Date.now()});
+  cambioEquipo('📦 Archivado. Puedes reintegrarlo más abajo');
+}
+function reemplazarJuez(id) {
+  const A = juezDe(id);
+  abrirDialogo(`
+    <h2>🔄 Reemplazar a ${esc(A.nombre)}</h2>
+    <label for="nuevoNombre">Nombre del nuevo juez</label>
+    <input type="text" id="nuevoNombre" maxlength="30" placeholder="Escribe un nombre">
+    <button class="opcion" data-r="temporal"><b>Reemplazo temporal</b><small>${esc(A.nombre)} se archiva y podrás reintegrarlo después</small></button>
+    <button class="opcion" data-r="definitivo"><b>Reemplazo definitivo</b><small>${esc(A.nombre)} sale de la lista. Sus calificaciones pasadas se conservan</small></button>`,
+    r => {
+      const campo = $('#nuevoNombre'), nombre = campo.value.trim();
+      if (!nombre) { campo.classList.add('mal'); campo.focus(); return false; }
+      const i = state.jueces.indexOf(A);
+      state.jueces.splice(i, 0, {id: nuevoId(), nombre, foto: '', estado: 'activo', por: null});   // el nuevo ocupa su lugar
+      if (r === 'temporal') Object.assign(A, {estado: 'archivado', por: state.jueces[i].id, archivadoEn: Date.now()});
+      else state.jueces.splice(i + 1, 1);
+      cambioEquipo(`🔄 ${nombre} reemplaza a ${A.nombre}`);
+    });
+}
+function reintegrarJuez(id) {
+  const A = juezDe(id), B = juezDe(A.por), lleno = panel().length >= MAX_JUECES;
+  const volver = msg => { Object.assign(A, {estado: 'activo', por: null}); cambioEquipo(msg); };
+  if (!B || B.estado !== 'activo')           // nadie ocupa su lugar: vuelve directo
+    return lleno ? aviso('Ya hay 16 jueces: quita a alguien primero') : volver(`↩️ ${A.nombre} volvió a la lista`);
+  abrirDialogo(`
+    <h2>↩️ Reintegrar a ${esc(A.nombre)}</h2>
+    <p class="ayuda izq">${esc(B.nombre)} ocupa ahora su lugar. ¿Qué quieres hacer?</p>
+    <button class="opcion" data-r="quitar"><b>Reintegrar y eliminar el reemplazo</b><small>${esc(A.nombre)} vuelve a su lugar y ${esc(B.nombre)} sale de la lista</small></button>
+    <button class="opcion" data-r="sumar"><b>Reintegrar y añadirlo a la lista</b><small>Se quedan los dos como jueces</small></button>`,
+    r => {
+      if (r === 'sumar' && lleno) return aviso('Ya hay 16 jueces: no cabe uno más');
+      if (r === 'quitar') state.jueces.splice(state.jueces.indexOf(B), 1);
+      volver(`↩️ ${A.nombre} volvió a la lista`);
+    });
+}
+function borrarJuez(id) {
+  state.jueces = state.jueces.filter(j => j.id !== id);
+  cambioEquipo('🗑️ Juez borrado. Sus calificaciones pasadas se conservan');
+}
+
+let ordenArchivo = 'Recientes';              // cómo se ordena la lista de archivados
+function moverJuez(id, d) {                  // sube (-1) o baja (+1) a un juez entre los activos; el orden se ve también al calificar
+  const pos = state.jueces.map((j, i) => j.estado === 'activo' ? i : -1).filter(i => i >= 0);   // lugares que ocupan los activos
+  const k = pos.findIndex(i => state.jueces[i].id === id), o = k + d;
+  if (o < 0 || o >= pos.length) return;
+  [state.jueces[pos[k]], state.jueces[pos[o]]] = [state.jueces[pos[o]], state.jueces[pos[k]]];
+  cambioEquipo();
+}
+let juezFoto = null;                         // juez al que se le está cambiando la foto
+$('#equipo').addEventListener('click', e => {
+  const b = e.target.closest('[data-a]');
+  if (!b) return;
+  const id = b.closest('[data-id]').dataset.id, a = b.dataset.a;
+  if (a === 'foto') { juezFoto = id; $('#archivoJuez').click(); }
+  else if (a === 'quitar') quitarJuez(id);
+  else if (a === 'reemplazar') reemplazarJuez(id);
+  else if (a === 'reintegrar') reintegrarJuez(id);
+  else if (a === 'subir') moverJuez(id, -1);
+  else if (a === 'bajar') moverJuez(id, 1);
+});
+$('#archivoJuez').onchange = e => {
+  const f = e.target.files[0], j = juezDe(juezFoto);
+  if (f && j) elegirArchivo(f, url => { j.foto = url; cambioEquipo(); });
+  e.target.value = '';
+};
+$('#listaJueces').addEventListener('change', e => {  // cambiar el nombre de un juez
+  if (!e.target.classList.contains('jn')) return;
+  const j = juezDe(e.target.closest('[data-id]').dataset.id);
+  e.target.value = j.nombre = e.target.value.trim() || j.nombre;
+  cambioEquipo();
+});
+$('#addJuez').onclick = () => {
+  if (panel().length >= MAX_JUECES) return aviso('El máximo es 16 jueces');
+  state.jueces.push({id: nuevoId(), nombre: 'Juez ' + (panel().length + 1), foto: '', estado: 'activo', por: null});
+  cambioEquipo('➕ Juez añadido: cámbiale el nombre y la foto');
+};
+
+/* ---------- 9. AJUSTES: copia de datos y tema de color ---------- */
+const PALETAS = {                            // nombre: [tono 0-360, saturación %, luminosidad % del color principal, color del fondo %]
+  Azul: [215, 50, 31, 16], Cielo: [200, 85, 36, 18], Índigo: [240, 48, 38, 14], Turquesa: [186, 70, 31, 16], Menta: [172, 55, 28, 16],
+  Verde: [130, 45, 28, 14], Lima: [80, 50, 30, 16], Dorado: [42, 90, 30, 20], Naranja: [26, 88, 40, 18], Coral: [12, 78, 46, 18],
+  Rojo: [2, 68, 42, 14], Vino: [345, 60, 30, 14], Rosa: [340, 62, 42, 16], Fucsia: [318, 65, 42, 16], Lavanda: [285, 40, 44, 20],
+  Violeta: [268, 52, 40, 16], Café: [24, 38, 30, 14], Grafito: [215, 10, 28, 8]
+};
+const DPIS = [55, 70, 85, 100, 120];   // tamaño de la app (DPI): se aplica al tamaño base de la letra
+const ESPECIALES = {                         // temas especiales: [nombre, muestra del botón, color del texto de la muestra]
+  darkaero: ['Dark Aero', 'radial-gradient(circle at 20% 10%,#19d3ff99,transparent 55%),radial-gradient(circle at 90% 45%,#a03cff88,transparent 50%),#06101c', '#e6f4ff'],
+  aurora: ['Frutiger Aurora', 'radial-gradient(circle at 12% 12%,#6ef2c4cc,transparent 50%),radial-gradient(circle at 88% 30%,#a98bffaa,transparent 55%),linear-gradient(180deg,#d4f1ff,#e3d9ff)', '#0b2a3f'],
+  eco: ['Frutiger Eco', 'radial-gradient(120% 40% at 15% 115%,#5fbf49 0 58%,transparent 59%),linear-gradient(180deg,#8ed5ff,#cfefff 45%,#e6f7c8)', '#12351a'],
+  aqua: ['Helvetica Aqua Aero', 'radial-gradient(circle at 80% 30%,#ffffffcc 0 9%,transparent 10%),linear-gradient(180deg,#f4feff,#c7eefa 50%,#7fd0ee)', '#06303f'],
+  metro: ['Frutiger Metro', 'linear-gradient(90deg,#00aba9 33%,#d80073 33% 66%,#a4c400 66%)', '#fff'],
+  miku: ['Hatsune Miku', 'linear-gradient(160deg,#eafffd,#7fdcd4 60%,#ff8fc4)', '#08403c'],
+  teto: ['Kasane Teto', 'linear-gradient(160deg,#fff4f6,#f08aa0 60%,#c8284a)', '#4a1020'],
+  neru: ['Akita Neru', 'linear-gradient(160deg,#1b170a,#3a3210 55%,#ffd400)', '#fff6c8']
+};
+const MODOS = {Claro: 'light', Oscuro: 'dark', Automático: null};              // null = sigue al teléfono
+let descargas = null;                        // permiso para descargar archivos (null si esta vista no lo tiene)
+
+const SIMBOLOS = {                           // símbolos del fondo (24x24, rellenos)
+  corazon: '<path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>',
+  estrella: '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/>',
+  cuadrado: '<rect x="3" y="3" width="18" height="18" rx="3"/>',
+  rombo: '<polygon points="12 1.5 22.5 12 12 22.5 1.5 12"/>',
+  circulo: '<circle cx="12" cy="12" r="10"/>',
+  triangulo: '<path d="M12 2.5 22 20.5H2z"/>',
+  luna: '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>',
+  flor: '<circle cx="12" cy="5.8" r="4.3"/><circle cx="18.2" cy="10.3" r="4.3"/><circle cx="15.8" cy="17.6" r="4.3"/><circle cx="8.2" cy="17.6" r="4.3"/><circle cx="5.8" cy="10.3" r="4.3"/><circle cx="12" cy="12" r="4"/>',
+  trebol: '<circle cx="12" cy="7.2" r="4.6"/><circle cx="6.8" cy="13.6" r="4.6"/><circle cx="17.2" cy="13.6" r="4.6"/><path d="M10.8 13h2.4l1.6 9H9.2z"/>',
+  cruz: '<path d="M9 2h6v7h7v6h-7v7H9v-7H2V9h7z"/>',
+  rayo: '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
+  gota: '<path d="M12 2.5C12 2.5 5 10 5 15a7 7 0 0 0 14 0c0-5-7-12.5-7-12.5z"/>'
+};
+const TEJAS = {                              // patrones sin símbolo: [ancho, alto, dibujo] de un cuadro que se repite
+  puntos: [32, 32, '<circle cx="8" cy="8" r="3"/><circle cx="24" cy="24" r="3"/>'],
+  rayas: [20, 20, '<path d="M20 0 0 20V16L16 0Z"/><path d="M20 20H16L20 16Z"/>'],
+  cuadricula: [28, 28, '<rect width="28" height="1.8"/><rect width="1.8" height="28"/>'],
+  tablero: [40, 40, '<rect width="20" height="20"/><rect x="20" y="20" width="20" height="20"/>'],
+  cruces: [28, 28, '<path d="M13 8h2v5h5v2h-5v5h-2v-5H8v-2h5z"/>'],
+  zigzag: [24, 12, '<path d="M0 6 6 0 12 6 18 0 24 6V10L18 4 12 10 6 4 0 10Z"/>']
+};
+const TAM_PATRON = [0.6, 0.8, 1, 1.3, 1.7];   // tamaño del patrón, de más chico a más grande (hasta donde se ve bien)
+const NOMBRES_PATRON = {corazon: 'Corazón', estrella: 'Estrella', cuadrado: 'Cuadrado', rombo: 'Rombo', circulo: 'Círculo', triangulo: 'Triángulo',
+  luna: 'Luna', flor: 'Flor', trebol: 'Trébol', cruz: 'Cruz', rayo: 'Rayo', gota: 'Gota', puntos: 'Puntos', rayas: 'Rayas',
+  cuadricula: 'Cuadrícula', tablero: 'Tablero', cruces: 'Cruces', zigzag: 'Zigzag', ninguno: 'Sin patrón'};
+
+function tejaDe(k) {                         // {w, h, dibujo} del cuadro que se repite (o null si no hay patrón)
+  if (SIMBOLOS[k]) return {w: 72, h: 72, dibujo: `<g transform="translate(10 10) rotate(-12 8 8) scale(.667)">${SIMBOLOS[k]}</g><g transform="translate(46 46) rotate(12 8 8) scale(.667)">${SIMBOLOS[k]}</g>`};
+  if (TEJAS[k]) { const [w, h, dibujo] = TEJAS[k]; return {w, h, dibujo}; }
+  return null;
+}
+function aplicarFondo(raiz) {                // el patrón es una máscara pintada con --patron (tono del fondo, más oscuro)
+  const k = state.pref.patron ?? 'estrella', t = tejaDe(k);
+  raiz.dataset.patron = t ? k : 'ninguno';
+  if (!t) return;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${t.w} ${t.h}"><g fill="#000">${t.dibujo}</g></svg>`;
+  raiz.style.setProperty('--forma', `url("data:image/svg+xml,${encodeURIComponent(svg)}")`);
+  const factor = TAM_PATRON[state.pref.tamPatron ?? 2] ?? 1;
+  raiz.style.setProperty('--tam', `${t.w * factor}px ${t.h * factor}px`);
+}
+function vistaPatron(k) {                    // el dibujito de cada botón de Ajustes
+  if (SIMBOLOS[k]) return `<svg viewBox="0 0 24 24" fill="currentColor">${SIMBOLOS[k]}</svg>`;
+  if (TEJAS[k]) {
+    const [w, h, d] = TEJAS[k];
+    return `<svg viewBox="0 0 ${w * 2} ${h * 2}" fill="currentColor"><g>${d}</g><g transform="translate(${w} 0)">${d}</g><g transform="translate(0 ${h})">${d}</g><g transform="translate(${w} ${h})">${d}</g></svg>`;
+  }
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><path d="M6.5 6.5l11 11"/></svg>';
+}
+function aplicarTema() {
+  const raiz = document.documentElement, modo = MODOS[state.tema.modo];
+  const [h, s, l, sb] = PALETAS[state.tema.paleta] ?? PALETAS.Azul;
+  for (const [k, v] of Object.entries({h, s: s + '%', l: l + '%', sb: sb + '%'})) raiz.style.setProperty('--' + k, v);
+  if (modo) raiz.dataset.theme = modo; else raiz.removeAttribute('data-theme');
+  aplicarFondo(raiz);
+  const especial = ESPECIALES[state.tema.especial] ? state.tema.especial : null;   // un tema especial reemplaza el modo y el color
+  if (especial) raiz.dataset.especial = especial; else delete raiz.dataset.especial;
+  raiz.style.fontSize = (DPIS[state.pref.dpi] ?? 100) + '%';
+  raiz.classList.toggle('svg', state.pref.iconos === 'SVG');   // SVG o emojis
+}
+function cambioTema() { aplicarTema(); guardarEstado(); pintarAjustes(); }
+function pintarAjustes() {
+  $('#estadoDatos').textContent = `✅ Todo se guarda solo en este dispositivo: ${state.avatars.length} avatars y ${state.jueces.length} jueces.`;
+  document.querySelectorAll('#ajustes [data-o]').forEach(i => i.checked = state.opc[i.dataset.o]);
+  pintarChips($('#chipsModo'), Object.keys(MODOS), state.tema.modo, m => { state.tema.modo = m; state.tema.especial = null; cambioTema(); });
+  pintarChips($('#chipsIconos'), ['SVG', 'Emojis'], state.pref.iconos, c => { state.pref.iconos = c; cambioTema(); });
+  $('#dpi').value = state.pref.dpi ?? 3;
+  const patron = state.pref.patron ?? 'estrella';
+  $('#tamPatron').value = state.pref.tamPatron ?? 2;
+  $('#nomFondo').textContent = NOMBRES_PATRON[patron] ?? NOMBRES_PATRON.ninguno;
+  $('#formas').innerHTML = [...Object.keys(SIMBOLOS), ...Object.keys(TEJAS), 'ninguno'].map(k =>
+    `<button class="forma ${k === patron ? 'on' : ''}" data-f="${k}" aria-label="${NOMBRES_PATRON[k]}" title="${NOMBRES_PATRON[k]}">${vistaPatron(k)}</button>`).join('');
+  $('#especiales').innerHTML = [['', ['Colores normales', 'var(--card)', 'var(--ink)']], ...Object.entries(ESPECIALES)].map(([k, [nombre, muestra, texto]]) =>
+    `<button class="especial ${(state.tema.especial || '') === k ? 'on' : ''}" data-e="${k}" style="background:${muestra};color:${texto}">${nombre}</button>`).join('');
+  $('#nomPaleta').textContent = state.tema.paleta;
+  $('#paleta').innerHTML = Object.entries(PALETAS).map(([nombre, [h, s, l]]) =>
+    `<button class="color ${nombre === state.tema.paleta ? 'on' : ''}" data-p="${nombre}" style="--c:hsl(${h} ${s}% ${l}%)" aria-label="${nombre}" title="${nombre}"></button>`).join('');
+  pintarClases();
+  iconizar($('#ajustes'));
+}
+let tCuenta = null;                          // cuenta atrás del botón "Sí" en los borrados grandes
+function confirmarBorrado(titulo, texto, accion) {   // el botón "Sí" queda bloqueado 5 segundos; Cancelar siempre se puede tocar
+  let falta = 5;
+  abrirDialogo(`
+    <h2>${titulo}</h2>
+    <p class="ayuda izq">${texto}</p>
+    <button class="btn peligro" id="btnSi" data-r="si" disabled style="width:100%;margin-top:.75rem">Sí, borrar (${falta})</button>`,
+    r => { if (r === 'si') accion(); });
+  clearInterval(tCuenta);
+  tCuenta = setInterval(() => {
+    const b = $('#btnSi');
+    if (!b) return clearInterval(tCuenta);
+    falta--;
+    if (falta > 0) b.textContent = `Sí, borrar (${falta})`;
+    else { b.textContent = 'Sí, borrar'; b.disabled = false; clearInterval(tCuenta); }
+  }, 1000);
+}
+function borrarTodosAvatars() {              // deja la app lista para una dinámica nueva: quita a los participantes, no a los jueces
+  state.avatars = [];
+  limpiarFormulario();
+  refrescarTodo();
+  aviso('🗑️ Se borraron todos los avatars. Lista para una dinámica nueva');
+}
+function reiniciarProgresoJueces() {         // pone en cero las estadísticas de todos los jueces; los avatars y sus puntajes no se tocan
+  state.historial = [];
+  guardarEstado(); pintarEquipo();
+  aviso('🗑️ Se borró el progreso de los jueces');
+}
+function borrarTodo() {                      // avatars, jueces y clases propias; las preferencias (tema, DPI, iconos) se conservan
+  Object.assign(state, {avatars: [], historial: [], clases: [...CLASES_BASE], recordar: false, recorte: null, recordarJuez: false, recorteJuez: null,
+    jueces: [1, 2, 3].map(i => ({id: 'j' + i, nombre: 'Juez ' + i, foto: '', estado: 'activo', por: null}))});
+  filtro = 'General';
+  limpiarFormulario();
+  refrescarTodo();
+  aviso('🗑️ Todo borrado: la app quedó como nueva');
+}
+const CLASES_BASE = ['General', 'Mujeres', 'Hombres', 'Femboy', 'Memes', 'Horror'];   // vienen con la app: no se renombran ni se borran
+const existeClase = nombre => state.clases.some(c => c.toLowerCase() === nombre.toLowerCase());
+function pintarClases() {
+  $('#listaClases').innerHTML = state.clases.map(c => CLASES_BASE.includes(c)
+    ? `<div class="clase-fila"><span class="jf">${ICONO[c]}</span><b>${esc(c)}</b><small>${c === 'General' ? 'incluye a todos' : 'viene con la app'}</small></div>`
+    : `<div class="clase-fila" data-c="${esc(c)}"><span class="jf">${ICONO[c]}</span><input type="text" class="cn" value="${esc(c)}" maxlength="20" aria-label="Nombre de la clase"><button class="btn sec" data-borrar-clase="${esc(c)}" aria-label="Borrar clase">🗑️</button></div>`).join('');
+  document.querySelectorAll('#listaClases [data-borrar-clase]').forEach(b => dosToques(b, () => borrarClase(b.dataset.borrarClase)));
+  iconizar($('#listaClases'));
+}
+function añadirClase() {
+  const campo = $('#nuevaClase'), nombre = campo.value.trim();
+  if (!nombre) { campo.classList.add('mal'); campo.focus(); return; }
+  if (existeClase(nombre)) return aviso('Ya existe una clase con ese nombre');
+  state.clases.push(nombre); ICONO[nombre] ??= '🏷️';
+  campo.value = ''; campo.classList.remove('mal');
+  guardarEstado(); pintarClases();
+  aviso(`➕ Clase "${nombre}" añadida`);
+}
+function renombrarClase(viejo, nuevo) {      // el cambio llega también a los avatars que la tenían
+  state.clases[state.clases.indexOf(viejo)] = nuevo;
+  state.avatars.forEach(a => { a.cats = (a.cats || []).map(c => c === viejo ? nuevo : c); });
+  form.cats = (form.cats || []).map(c => c === viejo ? nuevo : c);
+  if (filtro === viejo) filtro = nuevo;
+  ICONO[nuevo] ??= '🏷️';
+  guardarEstado(); pintarClases();
+}
+function borrarClase(clase) {                // la quita de la lista y de los avatars que la tenían
+  let n = 0;
+  state.avatars.forEach(a => { if (a.cats?.includes(clase)) { a.cats = a.cats.filter(c => c !== clase); n++; } });
+  state.clases = state.clases.filter(c => c !== clase);
+  form.cats = (form.cats || []).filter(c => c !== clase);
+  if (filtro === clase) filtro = 'General';
+  guardarEstado(); pintarClases();
+  aviso(`🗑️ Clase "${clase}" borrada (la tenían ${n} avatars)`);
+}
+const historialDe = avatars => avatars.flatMap(a => a.jueces.filter(j => j.pts !== null).map(j => ({aid: a.id, jid: j.jid, pts: j.pts, dif: j.pts - a.avg})));
+function normalizarEstado() {                // completa lo que falte en datos de versiones anteriores
+  state.opc = {preguntarSec: true, compacto: false, sonido: true, claseAbierta: false, enterPuntaje: true, vibrar: false, pantalla: false, ...state.opc};
+  state.pref.dpi ??= {Chiquito: 2, 'Muy Bajo': 1, Bajo: 2, Normal: 3, Grande: 4, Alto: 4}[state.pref.escala] ?? 3;   // antes el tamaño tenía nombres
+  delete state.pref.escala;
+  if (state.tema.paleta === 'Menta' && !state.tema.elegido) state.tema.paleta = 'Azul';   // el azul es el predeterminado
+  state.clases = [...new Set(['General', ...(state.clases || [])])];     // General siempre existe y va primero
+  CLASES_BASE.forEach((c, i) => {            // las clases que vienen con la app siempre existen (la nueva se coloca tras la anterior)
+    if (state.clases.some(x => x.toLowerCase() === c.toLowerCase())) return;
+    state.clases.splice(Math.max(state.clases.indexOf(CLASES_BASE[i - 1]) + 1, 1), 0, c);
+  });
+  state.avatars.forEach(a => { if (!a.cats) a.cats = a.cat && a.cat !== 'General' ? [a.cat] : []; delete a.cat; });   // antes cada avatar tenía una sola clase
+  state.clases.forEach(c => ICONO[c] ??= '🏷️');                       // las clases nuevas usan el icono de etiqueta
+  if (!state.historial) { migrar(); state.historial = historialDe(state.avatars); }   // progreso de los jueces: antes se calculaba al vuelo
+}
+function refrescarTodo() { aplicarTema(); guardarEstado(); pintarFormulario(); pintarRanking(); pintarEquipo(); pintarAjustes(); }
+
+function descargaDirecta(nombre, blob) {      // descarga normal del navegador
+  const url = URL.createObjectURL(blob), enlace = document.createElement('a');
+  enlace.href = url; enlace.download = nombre;
+  document.body.appendChild(enlace); enlace.click(); enlace.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+}
+async function exportarCopia() {
+  const archivo = `calificador-avatars-${new Date().toISOString().slice(0, 10)}.json`;
+  const datos = new Blob([JSON.stringify({app: 'calificador-avatars', version: 2, datos: state})], {type: 'application/json'});
+  if (!descargas) {                          // sin permiso de descargas: descarga normal (si estamos dentro de Claude, esperar a que cargue)
+    if (window.claude) return aviso('Un momento, la descarga se está preparando. Inténtalo otra vez');
+    descargaDirecta(archivo, datos); return aviso('✅ Copia descargada');
+  }
+  try { await descargas.save({filename: archivo, data: datos}); aviso('✅ Copia guardada'); }
+  catch (e) { if (e.code !== 'declined') aviso('No se pudo guardar la copia. Inténtalo otra vez'); }
+}
+async function leerCopia(archivo) {
+  let d;
+  try { d = JSON.parse(await archivo.text()).datos; } catch (e) { d = null; }
+  if (!Array.isArray(d?.avatars) || !Array.isArray(d?.jueces) || !d.jueces.some(j => j.estado === 'activo'))
+    return aviso('Ese archivo no es una copia de esta app');
+  abrirDialogo(`
+    <h2>⬆️ Importar copia</h2>
+    <p class="ayuda izq">El archivo trae ${d.avatars.length} avatars y ${d.jueces.length} jueces. ¿Qué quieres hacer?</p>
+    <button class="opcion" data-r="combinar"><b>Combinar con lo que tengo</b><small>Añade lo que falte. Los jueces nuevos quedan archivados</small></button>
+    <button class="opcion" data-r="reemplazar"><b>Reemplazar todo</b><small>Borra lo que hay ahora y deja solo lo del archivo</small></button>`,
+    r => r === 'reemplazar' ? reemplazarDatos(d) : combinarDatos(d));
+}
+function reemplazarDatos(d) {
+  state = {...state, ...d};
+  state.historial = d.historial ?? historialDe(d.avatars);
+  normalizarEstado();
+  limpiarFormulario();
+  refrescarTodo(); aviso('✅ Copia importada');
+}
+function combinarDatos(d) {
+  const idsA = new Set(state.avatars.map(a => a.id)), idsJ = new Set(state.jueces.map(j => j.id));
+  const nuevosA = d.avatars.filter(a => !idsA.has(a.id)), nuevosJ = d.jueces.filter(j => !idsJ.has(j.id));
+  state.avatars.push(...nuevosA);
+  state.historial.push(...(d.historial ? d.historial.filter(h => nuevosA.some(a => a.id === h.aid)) : historialDe(nuevosA)));
+  state.clases.push(...(d.clases || []).filter(c => !state.clases.includes(c)));   // trae también sus clases
+  normalizarEstado();
+  state.jueces.push(...nuevosJ.map(j => ({...j, estado: 'archivado', por: null, archivadoEn: Date.now()})));
+  refrescarTodo(); aviso(`✅ Se añadieron ${nuevosA.length} avatars y ${nuevosJ.length} jueces`);
+}
+
+$('#exportar').onclick = exportarCopia;
+$('#importar').onclick = () => $('#archivoCopia').click();
+$('#archivoCopia').onchange = e => { const f = e.target.files[0]; if (f) leerCopia(f); e.target.value = ''; };
+$('#paleta').onclick = e => {
+  const b = e.target.closest('[data-p]');
+  if (b) { state.tema.paleta = b.dataset.p; state.tema.elegido = true; state.tema.especial = null; cambioTema(); }
+};
+
+const pedirReinicioProgreso = () => confirmarBorrado('¿Borrar el progreso de los jueces?', 'Se ponen en cero las estadísticas de <b>todos los jueces</b> (avatars calificados, promedio, mínimo y máximo, estricto o suave). Los avatars y sus puntajes se quedan. No se puede deshacer.', reiniciarProgresoJueces);
+$('#borrarProgreso').onclick = pedirReinicioProgreso;
+$('#reiniciarProgreso').onclick = pedirReinicioProgreso;
+$('#borrarAvatars').onclick = () => {
+  if (!state.avatars.length) return aviso('Todavía no hay avatars que borrar');
+  confirmarBorrado('¿Borrar todos los avatars?', `Se borrarán los <b>${state.avatars.length}</b> avatars (fotos, puntajes y comentarios). Los jueces (con su progreso), las clases y tus preferencias se quedan. No se puede deshacer.`, borrarTodosAvatars);
+};
+$('#borrarTodo').onclick = () => confirmarBorrado('¿Borrar TODO?', `Se borrarán los <b>${state.avatars.length}</b> avatars, todos los jueces (con sus fotos y su progreso) y las clases que creaste. Se mantienen tus preferencias (tema, DPI, iconos). No se puede deshacer: si quieres conservar algo, exporta una copia antes.`, borrarTodo);
+$('#dlgJuez').addEventListener('close', () => clearInterval(tCuenta));
+$('#buscarArchivo').oninput = pintarEquipo;
+$('#tamPatron').oninput = e => { state.pref.tamPatron = +e.target.value; aplicarFondo(document.documentElement); };   // se ve mientras arrastras
+$('#tamPatron').onchange = guardarEstado;
+$('#dpi').onchange = e => { state.pref.dpi = +e.target.value; cambioTema(); };   // se aplica al soltar la barra
+$('#addClase').onclick = añadirClase;
+$('#nuevaClase').onkeydown = e => { if (e.key === 'Enter') añadirClase(); };
+$('#nuevaClase').oninput = e => e.target.classList.remove('mal');
+$('#listaClases').addEventListener('change', e => {  // renombrar una clase propia
+  if (!e.target.classList.contains('cn')) return;
+  const viejo = e.target.closest('[data-c]').dataset.c, nuevo = e.target.value.trim();
+  if (!nuevo || nuevo === viejo) { e.target.value = viejo; return; }
+  if (existeClase(nuevo)) { e.target.value = viejo; return aviso('Ya existe una clase con ese nombre'); }
+  renombrarClase(viejo, nuevo);
+});
+$('#especiales').onclick = e => {                  // elegir un tema especial (o volver a los colores normales)
+  const b = e.target.closest('[data-e]');
+  if (b) { state.tema.especial = b.dataset.e || null; cambioTema(); }
+};
+$('#formas').onclick = e => {
+  const b = e.target.closest('[data-f]');
+  if (b) { state.pref.patron = b.dataset.f; cambioTema(); }
+};
+$('#ajustes').onchange = e => {
+  const k = e.target.dataset.o;
+  if (!k) return;
+  state.opc[k] = e.target.checked;
+  if (k === 'compacto') ponerCompacto(e.target.checked);
+  if (k === 'sonido' && e.target.checked) burbuja();
+  if (k === 'pantalla') mantenerPantalla();
+  if (k === 'borrador' && !e.target.checked) { clearTimeout(tBorrador); Almacen.guardar(null, 'borrador'); }
+  guardarEstado();
+};
+
+/* ---------- 10. ARRANQUE ---------- */
+document.querySelectorAll('[data-v]').forEach(t => t.onclick = () => irA(t.dataset.v));
+let toque = null;                            // deslizar a los lados en el carnet: avatar anterior / siguiente
+$('#dlgCarnet').addEventListener('touchstart', e => { toque = {x: e.touches[0].clientX, y: e.touches[0].clientY}; }, {passive: true});
+$('#dlgCarnet').addEventListener('touchend', e => {
+  if (!toque) return;
+  const dx = e.changedTouches[0].clientX - toque.x, dy = e.changedTouches[0].clientY - toque.y, d = $('#carnet').dataset;
+  toque = null;
+  if (Math.abs(dx) < 70 || Math.abs(dx) < Math.abs(dy) * 2) return;
+  const destino = dx > 0 ? d.antes : d.despues;
+  if (destino) abrirCarnet(destino);
+});
+$('#dlgCarnet').onclick = e => { if (e.target.id === 'dlgCarnet') e.target.close(); };
+$('#dlgJuez').onclick = e => { if (e.target.id === 'dlgJuez') e.target.close(); };
+aplicarTema();                               // tema por defecto mientras se cargan los datos
+(async () => {
+  const [guardado, borrador] = await Promise.all([Almacen.leer(), Almacen.leer('borrador')]);
+  if (guardado) state = {...state, ...guardado};
+  normalizarEstado();
+  migrar(); aplicarTema();
+  if (borrador && state.opc.borrador) { form = {...formVacio(), ...borrador}; aviso('📝 Recuperé lo que estabas llenando'); }
+  pintarFormulario(); pintarRanking(); pintarEquipo(); pintarAjustes();
+  mantenerPantalla();
+  window.claude?.use('downloads').then(d => { descargas = d; pintarAjustes(); }, () => {});
+})();
+</script>
+</body>
+</html>
