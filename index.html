@@ -118,9 +118,6 @@ dialog canvas{display:block;width:100%;max-width:17.5rem;margin:0.5rem auto;bord
 .izq{text-align:left}
 .sep{margin:1.125rem 0 0.375rem}
 .mal{border-color:var(--bad)!important}
-/* ===== CRÉDITOS ===== */
-.creditos{margin:1.25rem 0 0.5rem;text-align:center;color:var(--soft);font-size:0.8125rem;line-height:1.5}
-
 /* ===== AJUSTES ===== */
 .engranaje{position:absolute;top:0.375rem;right:0.5rem;width:2.5rem;height:2.5rem;border:0;border-radius:50%;background:none;font-size:1.375rem;cursor:pointer}
 .engranaje.on{background:var(--line)}
@@ -219,42 +216,29 @@ html[data-especial=aqua] :is(.btn,.chip){border-radius:99px}
 html[data-especial=metro] body{font-family:"Segoe UI","Open Sans",system-ui,sans-serif}
 html[data-especial=metro] h1,html[data-especial=metro] h2{font-weight:300}
 html[data-especial=metro] :is(.card,.btn,.chip,.opcion,.fila,.foto,.tachar,.mini-btn,.pill,.com,.badge,.desc,.se-fue,.forma,.especial,input,textarea,dialog,.marco,.carnet-foto,.mini,.tab){border-radius:0}
-/* ===== AJUSTES EN GRUPOS Y CARNET RENOVADO ===== */
-.grupo{padding:0;overflow:hidden}
-.grupo>summary{display:flex;align-items:center;gap:.75rem;margin:0;padding:.8rem .9rem;list-style:none;cursor:pointer}
-.grupo>summary::-webkit-details-marker{display:none}
-.grupo>summary::after{content:"";flex:none;margin-left:auto;width:.55rem;height:.55rem;border-right:2px solid var(--soft);border-bottom:2px solid var(--soft);transform:rotate(45deg);transition:transform .2s}
-.grupo[open]>summary::after{transform:rotate(-135deg)}
-.grupo[open]>summary{border-bottom:1px solid var(--line)}
-.g-ico{display:grid;place-items:center;flex:none;width:2.4rem;height:2.4rem;border-radius:.7rem;background:var(--bg);font-size:1.2rem}
-.g-txt b{display:block;font-size:1.05rem;font-weight:600}
-.g-txt small{display:block;color:var(--soft);font-size:.8rem;font-weight:400}
-.grupo-cuerpo{padding:.25rem .9rem .9rem}
-.sub{margin:1.1rem 0 .1rem;padding-top:.8rem;border-top:1px solid var(--line);color:var(--soft);font-size:.8rem;font-weight:600}
-.sub:first-child{margin-top:.5rem;padding-top:0;border-top:0}
-#tarjetaBorrar .g-ico{background:var(--bad);color:#fff}
-#carnet .marco{width:min(85%,44.6vh);margin:0 auto 14px}
-.carnet-barra{position:sticky;top:0;z-index:3;display:flex;align-items:center;justify-content:space-between;gap:.5rem;padding:.5rem .6rem;border-bottom:1px solid var(--line);background:var(--dialogo,var(--card))}
-.carnet-nav{display:flex;align-items:center;gap:.4rem}
-.cnt{min-width:4.2rem;text-align:center}
-.carnet-foto{box-shadow:0 10px 26px #0000003a}
-.medalla{position:absolute;left:10px;top:10px;display:grid;place-items:center;width:2.6rem;height:2.6rem;border-radius:50%;background:var(--card);box-shadow:0 3px 8px #0004;font-size:1.5rem}
-.gt{color:var(--soft);font-weight:600}
-.pills{display:flex;flex-wrap:wrap;justify-content:center;gap:.35rem;margin:.5rem 0}
-.pills .pill{margin:0}
-.pill.suave{border:1px solid var(--line);background:none;font-weight:400}
-.datos{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin:.75rem 0 .25rem}
-.datos div{padding:.5rem .25rem;border:1px solid var(--line);border-radius:.8rem;background:var(--bg)}
-.datos b{display:block;color:var(--main);font-size:1.25rem;font-weight:600}
-.datos small{display:block;color:var(--soft);font-size:.72rem;line-height:1.2}
-.jrow .medidor{margin-top:.4rem}
-.carnet-acciones{position:sticky;bottom:0;z-index:3;display:flex;gap:.5rem;padding:.6rem .75rem;border-top:1px solid var(--line);background:var(--dialogo,var(--card))}
-.carnet-acciones .btn{flex:1;padding:.7rem .4rem}
-#carnet>.link{display:block;margin:.5rem auto}
-.fila-cuenta{display:flex;align-items:center;justify-content:space-between}
-.fila-cuenta p{margin:.25rem 0}
-#aviso.con-accion{pointer-events:auto}
-.deshacer{margin-left:.5rem;padding:.2rem .8rem;border:0;border-radius:99px;background:var(--bg);color:var(--ink);font-weight:600;cursor:pointer}
+/* ===== TEMAS ESPECIALES NUEVOS (del juego de pareo): mismas variables que los de arriba ===== */
+html:root[data-especial=aero]{--bg:#e9fbff;--card:#ffffffa0;--ink:#0b3552;--soft:#3b6a8a;--line:#4a9cc455;--main:#1a8fd0;--on:#fff;--patron:#00507a14;--gold:#ffd84d;--ok:#14a56a;--bad:#d6335a;--neu:#5b8aa4;--fondo:radial-gradient(circle at 12% 22%,#ffffffd0 0 3.2%,#ffffff55 3.4% 5%,transparent 5.2%),radial-gradient(circle at 86% 14%,#ffffffc0 0 5%,#ffffff44 5.2% 7.5%,transparent 7.7%),radial-gradient(circle at 72% 68%,#ffffffb0 0 2.4%,#ffffff44 2.6% 4%,transparent 4.2%),radial-gradient(circle at 20% 84%,#ffffffb0 0 4%,#ffffff44 4.2% 6%,transparent 6.2%),radial-gradient(ellipse 120% 30% at 50% 110%,#7ed957aa 0 55%,transparent 56%),linear-gradient(180deg,#5ec2ff 0%,#a8e3ff 45%,#e9fbff 100%);--cab:#ffffff99;--boton:linear-gradient(180deg,#6fd0ff 0%,#1a9fe0 48%,#0b7fbf 52%,#1693d6 100%);--brillo:inset 0 1px 0 #ffffffcc,0 3px 10px #0b7fbf66;--tsombra:0 1px 1px #0006;--cristal:blur(14px) saturate(1.6);--sombra:0 8px 28px #0a507a40,inset 0 1px 0 #fff,inset 0 -10px 24px #ffffff55;--dialogo:#eefaff}
+html:root[data-especial=synth]{--bg:#12062e;--card:#1a0a38cc;--ink:#fbe9ff;--soft:#c9a6e8;--line:#ff3d9a55;--main:#ff3d9a;--on:#fff;--patron:#00000055;--gold:#ffd23f;--ok:#3dffa3;--bad:#ff5b7f;--neu:#c9a6e8;--fondo:repeating-linear-gradient(90deg,#ff3d9a44 0 1px,transparent 1px 48px) bottom/100% 36% no-repeat,repeating-linear-gradient(0deg,#ff3d9a44 0 1px,transparent 1px 24px) bottom/100% 36% no-repeat,radial-gradient(circle at 50% 64%,#ffd23f 0 8%,#ff3d9a 8.5% 19%,transparent 19.5%),linear-gradient(180deg,#12062e 0%,#3b0f6b 55%,#8a1f7a 100%);--cab:#12062ed0;--boton:linear-gradient(180deg,#ff7cc0 0%,#ff3d9a 48%,#d41a78 52%,#f0308c 100%);--brillo:inset 0 1px 0 #ffffffa0,0 0 16px #ff3d9a99;--tsombra:0 1px 1px #0008;--cristal:blur(10px) saturate(1.4);--sombra:0 0 24px #ff3d9a44,0 8px 30px #0008,inset 0 1px 0 #ffffff1f;--dialogo:#1a0a38}
+html:root[data-especial=paper]{--bg:#fffdf3;--card:#fffdf3f2;--ink:#2b2a3a;--soft:#6a6880;--line:#d9d2b8;--main:#2f6fd6;--on:#fff;--patron:#00000010;--gold:#e6a817;--ok:#2e8b57;--bad:#cf3f3f;--neu:#7a7a8a;--fondo:linear-gradient(90deg,transparent 52px,#e8707099 52px 54px,transparent 54px),repeating-linear-gradient(180deg,transparent 0 30px,#a9cdf2 30px 31px),#fffdf3;--cab:#fffdf3e6;--boton:#2f6fd6;--brillo:0 3px 0 #1d4fa3;--cristal:none;--sombra:0 4px 0 #d9d2b866,0 8px 18px #0000001f;--dialogo:#fffdf3}
+html:root[data-especial=pixel]{--bg:#0b1030;--card:#141a4a;--ink:#fff6d6;--soft:#a9b6ff;--line:#ffb00099;--main:#ffb000;--on:#1a1200;--patron:#00000066;--gold:#ffb000;--ok:#5dff7a;--bad:#ff3d6e;--neu:#a9b6ff;--fondo:repeating-linear-gradient(0deg,#00000030 0 1px,transparent 1px 3px),radial-gradient(#fff 1px,transparent 1.6px) 0 0/46px 46px,radial-gradient(#9fb8ff 1px,transparent 1.6px) 23px 23px/46px 46px,#0b1030;--cab:#0b1030;--boton:#ffb000;--brillo:3px 3px 0 #000;--cristal:none;--sombra:6px 6px 0 #000;--dialogo:#141a4a}
+html:root[data-especial=candy]{--bg:#fff0f7;--card:#ffffffe6;--ink:#5a2145;--soft:#9a5a82;--line:#ffb3d6;--main:#e8458b;--on:#fff;--patron:#ff5fa214;--gold:#ffb347;--ok:#2fb37a;--bad:#e0365f;--neu:#a889a0;--fondo:radial-gradient(circle at 18% 20%,#ffffffaa 0 6%,transparent 6.5%),radial-gradient(circle at 82% 72%,#ffffff88 0 9%,transparent 9.5%),radial-gradient(circle at 60% 10%,#c9f2ff 0 5%,transparent 5.5%),linear-gradient(160deg,#ffe3f0,#ffd1e6 55%,#c9f0ff);--cab:#ffffffb8;--boton:linear-gradient(180deg,#ff7ab5 0%,#f0508f 55%,#d63a79 100%);--brillo:inset 0 1px 0 #ffffffb0,0 3px 0 #b02a63;--tsombra:0 1px 1px #0004;--cristal:blur(8px);--sombra:0 6px 0 #ffffff99,0 12px 24px #ff5fa244;--dialogo:#fff6fa}
+html:root[data-especial=sunset]{--bg:#3b1f6a;--card:#ffffffe6;--ink:#3a2140;--soft:#7a5a80;--line:#c4456b44;--main:#e8542a;--on:#fff;--patron:#00000014;--gold:#ffc14d;--ok:#2a9a5a;--bad:#c9304f;--neu:#8a6a80;--fondo:radial-gradient(circle at 50% 76%,#fff3c4 0 8%,#ffd27a 8.5% 16%,transparent 16.5%),linear-gradient(180deg,#3b1f6a 0%,#c4456b 46%,#ff6a3d 72%,#ffc14d 100%);--cab:#ffffffd9;--boton:linear-gradient(180deg,#ff8a5c 0%,#ff6a3d 48%,#d9482b 52%,#ee5a32 100%);--brillo:inset 0 1px 0 #ffffffa0,0 2px 10px #d9482b66;--tsombra:0 1px 1px #0006;--cristal:blur(10px) saturate(1.3);--sombra:0 6px 22px #3b1f6a55,inset 0 1px 0 #fff;--dialogo:#fff7f0}
+html:root[data-especial=ocean]{--bg:#e0f6ff;--card:#ffffffdb;--ink:#0b2f4a;--soft:#4a7490;--line:#3a8ca844;--main:#0b6fb5;--on:#fff;--patron:#00406a14;--gold:#ffd84d;--ok:#13a56d;--bad:#d13a5a;--neu:#5b8394;--fondo:radial-gradient(120% 20% at 28% 104%,#2ec4b6bb 0 58%,transparent 59%),radial-gradient(120% 18% at 82% 108%,#0b6fb5bb 0 58%,transparent 59%),linear-gradient(180deg,#e0f6ff 0%,#74cbea 52%,#0d5c9c 100%);--cab:#ffffffb8;--boton:linear-gradient(180deg,#3aa6e8 0%,#0b6fb5 48%,#085590 52%,#0a68ab 100%);--brillo:inset 0 1px 0 #ffffffa0,0 2px 10px #0b6fb566;--tsombra:0 1px 1px #0006;--cristal:blur(10px) saturate(1.4);--sombra:0 6px 20px #0a3a5a40,inset 0 1px 0 #fff;--dialogo:#f0fbff}
+html:root[data-especial=chalk]{--bg:#1b3a2b;--card:#ffffff12;--ink:#f6f3e4;--soft:#bcd3c5;--line:#ffffff55;--main:#f4d35e;--on:#2a2200;--patron:#ffffff0f;--gold:#f4d35e;--ok:#7be0a3;--bad:#ff8a8a;--neu:#bcd3c5;--fondo:radial-gradient(ellipse at 30% 18%,#2f5d46,transparent 60%),linear-gradient(160deg,#25503b,#1b3a2b);--cab:#1b3a2bd9;--boton:#f4d35e;--brillo:0 3px 0 #b89b2b;--tsombra:none;--cristal:none;--sombra:none;--dialogo:#1f4231}
+html:root[data-especial=neon]{--bg:#07070b;--card:#101016e0;--ink:#fffbe0;--soft:#c9c38a;--line:#ffe60055;--main:#ffe600;--on:#1a1700;--patron:#00000066;--gold:#ffe600;--ok:#5dff7a;--bad:#ff3d7a;--neu:#c9c38a;--fondo:repeating-linear-gradient(0deg,#00000030 0 1px,transparent 1px 3px),radial-gradient(ellipse at 88% 0%,#ff2bd644,transparent 50%),radial-gradient(ellipse at 8% 100%,#ffe60033,transparent 55%),#07070b;--cab:#07070bdd;--boton:linear-gradient(180deg,#fff27a 0%,#ffe600 50%,#d9c400 100%);--brillo:inset 0 1px 0 #fff9,0 0 16px #ffe60077;--tsombra:none;--cristal:blur(6px);--sombra:0 0 0 1px #000,0 8px 30px #000a,0 0 18px #ffe60022;--dialogo:#101016}
+html:root[data-especial=chrome]{--bg:#eef1f7;--card:#ffffffe0;--ink:#26304d;--soft:#5a6482;--line:#9aa4bb88;--main:#4f5fe8;--on:#fff;--patron:#26304d14;--gold:#ffd84d;--ok:#1f9a5a;--bad:#d6335a;--neu:#6b7490;--fondo:radial-gradient(circle at 20% 15%,#fff 0 6%,transparent 7%),radial-gradient(circle at 85% 80%,#ffffffaa 0 8%,transparent 9%),linear-gradient(135deg,#eef1f7,#c3cad8 40%,#f7f8fc 60%,#9aa4bb);--cab:#ffffffb8;--boton:linear-gradient(180deg,#8f9cff 0%,#4f5fe8 48%,#3342c4 52%,#4658e0 100%);--brillo:inset 0 1px 0 #ffffffcc,0 2px 8px #3342c466;--tsombra:0 1px 1px #0006;--cristal:blur(8px) saturate(1.3);--sombra:0 8px 24px #28325a55,inset 0 1px 0 #fff;--dialogo:#f3f5fb}
+html[data-especial=aero] body,html[data-especial=chrome] body,html[data-especial=synth] body,html[data-especial=neon] body{font-family:"Segoe UI",Fredoka,system-ui,sans-serif}
+html[data-especial=aero] :is(.btn,.chip),html[data-especial=candy] :is(.btn,.chip){border-radius:99px}
+html[data-especial=candy] body{font-family:"Trebuchet MS",Fredoka,system-ui,sans-serif}
+html[data-especial=candy] .card{border-radius:1.4rem}
+html[data-especial=paper] body,html[data-especial=chalk] body{font-family:"Segoe Print","Bradley Hand","Chalkboard SE","Comic Sans MS",Fredoka,cursive}
+html[data-especial=paper] :is(.card,.btn){border-radius:.5rem}
+html[data-especial=chalk] .card{border:2px dashed #ffffff77}
+html[data-especial=pixel] body{font-family:"Courier New",ui-monospace,monospace}
+html[data-especial=pixel] :is(h1,h2,.btn){text-transform:uppercase;letter-spacing:.03em}
+html[data-especial=pixel] :is(.card,.btn,.chip,.opcion,.fila,.foto,.tachar,.mini-btn,.pill,.com,.badge,.desc,.se-fue,.forma,.especial,input,textarea,dialog,.marco,.carnet-foto,.mini,.tab){border-radius:0}
+html[data-especial=pixel] .card{border:3px solid #ffb000}
+html[data-especial=pixel] .btn:not(.sec){border:3px solid #000}
 </style>
 </head>
 <body>
@@ -316,7 +300,7 @@ html[data-especial=metro] :is(.card,.btn,.chip,.opcion,.fila,.foto,.tachar,.mini
     <p class="ayuda izq">Ordenar por</p>
     <div class="chips" id="chipsOrden"></div>
     <label class="check" id="filaTachados" hidden><input type="checkbox" id="ocultarTachados"> Ocultar a los tachados</label>
-    <div class="fila-cuenta"><p class="ayuda izq" id="contarRanking"></p><button class="link" id="copiarRanking">📋 Copiar</button></div>
+    <p class="ayuda izq" id="contarRanking"></p>
     <div id="lista"></div>
   </section>
 
@@ -335,89 +319,62 @@ html[data-especial=metro] :is(.card,.btn,.chip,.opcion,.fila,.foto,.tachar,.mini
 
   <!-- ===== PANTALLA 4: AJUSTES (engranaje ⚙️) ===== -->
   <section id="ajustes" hidden>
-    <p class="ayuda izq">Toca un grupo para abrirlo.</p>
-
-    <details class="card grupo" id="grupoCalificar">
-      <summary><span class="g-ico">🧰</span><span class="g-txt"><b>Al calificar</b><small>Teclado, comentarios, clases y guardado</small></span></summary>
-      <div class="grupo-cuerpo">
-        <label class="fila-op"><input type="checkbox" data-o="enterPuntaje"><span><b>Enter pasa al siguiente puntaje</b><small>Con Enter saltas del puntaje de un juez al del siguiente (Mayús + Enter vuelve al anterior). Si lo apagas, Enter baja por los comentarios</small></span></label>
-        <label class="fila-op"><input type="checkbox" data-o="compacto"><span><b>Ocultar los comentarios de los jueces</b><small>Deja solo el puntaje de cada juez, lo más compacto posible</small></span></label>
-        <label class="fila-op"><input type="checkbox" data-o="claseAbierta"><span><b>Clase desplegada al registrar</b><small>Si lo apagas, la clase aparece plegada y solo se ve un resumen</small></span></label>
-        <label class="fila-op"><input type="checkbox" data-o="preguntarSec"><span><b>Preguntar la clase al guardar</b><small>Solo si no la elegiste en el registro. Si lo apagas, sin clase elegida va a General</small></span></label>
-        <label class="fila-op"><input type="checkbox" data-o="carnet"><span><b>Mostrar el carnet al guardar</b><small>Apágalo para guardar y seguir directo con el siguiente avatar</small></span></label>
-        <label class="fila-op"><input type="checkbox" data-o="borrador"><span><b>Borrador automático</b><small>Si cierras la app a medias, recupera lo que estabas llenando</small></span></label>
+    <div class="card">
+      <h2>💾 Tus datos</h2>
+      <p class="ayuda izq" id="estadoDatos"></p>
+      <button class="opcion" id="exportar"><b>⬇️ Exportar copia</b><small>Descarga un archivo con tus avatars, jueces y fotos</small></button>
+      <button class="opcion" id="importar"><b>⬆️ Importar copia</b><small>Carga un archivo que exportaste antes</small></button>
+      <p class="ayuda izq" id="notaCopia"></p>
+      <input type="file" id="archivoCopia" accept=".json,application/json" hidden>
+    </div>
+    <div class="card" id="comodidad">
+      <h2>🧰 Comodidad</h2>
+      <label class="fila-op"><input type="checkbox" data-o="borrador"><span><b>Borrador automático</b><small>Si cierras la app a medias, recupera lo que estabas llenando</small></span></label>
+      <label class="fila-op"><input type="checkbox" data-o="carnet"><span><b>Mostrar el carnet al guardar</b><small>Apágalo para guardar y seguir directo con el siguiente avatar</small></span></label>
+      <label class="fila-op"><input type="checkbox" data-o="preguntarSec"><span><b>Preguntar la clase al guardar</b><small>Solo si no la elegiste en el registro. Si lo apagas, sin clase elegida va a General</small></span></label>
+      <label class="fila-op"><input type="checkbox" data-o="compacto"><span><b>Ocultar los comentarios de los jueces</b><small>Deja solo el puntaje de cada juez, lo más compacto posible</small></span></label>
+      <label class="fila-op"><input type="checkbox" data-o="claseAbierta"><span><b>Clase desplegada al registrar</b><small>Si lo apagas, la clase aparece plegada y solo se ve un resumen</small></span></label>
+      <label class="fila-op"><input type="checkbox" data-o="sonido"><span><b>Sonido de burbuja al tocar</b><small>Un "plop" suave cada vez que tocas un botón</small></span></label>
+    </div>
+    <div class="card" id="tarjetaClases">
+      <h2>🏷️ Clases</h2>
+      <p class="ayuda izq">Las clases son los grupos del ranking. General incluye a todos; a cada avatar le puedes dar una o varias clases al guardarlo.</p>
+      <div id="listaClases"></div>
+      <div class="fila-nueva"><input type="text" id="nuevaClase" maxlength="20" placeholder="Nombre de la nueva clase"><button class="btn" id="addClase">➕ Añadir</button></div>
+    </div>
+    <div class="card">
+      <h2>🎨 Preferencias</h2>
+      <div class="lbl">Modo</div>
+      <div class="chips" id="chipsModo"></div>
+      <div class="lbl">Color: <span id="nomPaleta"></span></div>
+      <div class="paleta" id="paleta"></div>
+      <div class="lbl">Fondo: <span id="nomFondo"></span></div>
+      <div class="paleta" id="formas"></div>
+      <div class="lbl">Tamaño del patrón</div>
+      <div class="dpi-caja">
+        <div class="dpi-marcas"><span></span><span></span><span></span><span></span><span></span></div>
+        <input type="range" id="tamPatron" class="dpi" min="0" max="4" step="1" value="2" aria-label="Tamaño del patrón">
       </div>
-    </details>
-
-    <details class="card grupo" id="grupoSonido">
-      <summary><span class="g-ico">🔔</span><span class="g-txt"><b>Sonido y pantalla</b><small>Sonido, vibración y pantalla encendida</small></span></summary>
-      <div class="grupo-cuerpo">
-        <label class="fila-op"><input type="checkbox" data-o="sonido"><span><b>Sonido de burbuja al tocar</b><small>Un "plop" suave cada vez que tocas un botón</small></span></label>
-        <label class="fila-op"><input type="checkbox" data-o="vibrar"><span><b>Vibración suave al tocar</b><small>Una vibración muy corta en cada botón (solo en celulares que la permitan)</small></span></label>
-        <label class="fila-op"><input type="checkbox" data-o="pantalla"><span><b>Mantener la pantalla encendida</b><small>Útil durante una dinámica en vivo, para que no se apague mientras calificas</small></span></label>
+      <div class="lbl">Iconos</div>
+      <div class="chips" id="chipsIconos"></div>
+      <div class="lbl">Tamaño (DPI)</div>
+      <div class="dpi-caja">
+        <div class="dpi-marcas"><span></span><span></span><span></span><span></span><span></span></div>
+        <input type="range" id="dpi" class="dpi" min="0" max="4" step="1" value="3" aria-label="Tamaño de la app (DPI)">
       </div>
-    </details>
-
-    <details class="card grupo" id="tarjetaClases">
-      <summary><span class="g-ico">🏷️</span><span class="g-txt"><b>Clases</b><small>Los grupos del ranking: añade las tuyas</small></span></summary>
-      <div class="grupo-cuerpo">
-        <p class="ayuda izq">General incluye a todos; a cada avatar le puedes dar una o varias clases al guardarlo.</p>
-        <div id="listaClases"></div>
-        <div class="fila-nueva"><input type="text" id="nuevaClase" maxlength="20" placeholder="Nombre de la nueva clase"><button class="btn" id="addClase">➕ Añadir</button></div>
-      </div>
-    </details>
-
-    <details class="card grupo" id="grupoApariencia">
-      <summary><span class="g-ico">🎨</span><span class="g-txt"><b>Apariencia</b><small>Colores, temas especiales, fondo, iconos y tamaño</small></span></summary>
-      <div class="grupo-cuerpo">
-        <div class="sub">Colores</div>
-        <div class="lbl">Modo</div>
-        <div class="chips" id="chipsModo"></div>
-        <div class="lbl">Color: <span id="nomPaleta"></span></div>
-        <div class="paleta" id="paleta"></div>
-        <div class="sub">Temas especiales</div>
-        <p class="ayuda izq">Estilos completos con degradados, brillos y cristal. Al elegir uno reemplaza el modo y el color; para volver, toca "Colores normales" o elige un color.</p>
-        <div class="especiales" id="especiales"></div>
-        <div class="sub">Fondo</div>
-        <div class="lbl">Patrón: <span id="nomFondo"></span></div>
-        <div class="paleta" id="formas"></div>
-        <div class="lbl">Tamaño del patrón</div>
-        <div class="dpi-caja">
-          <div class="dpi-marcas"><span></span><span></span><span></span><span></span><span></span></div>
-          <input type="range" id="tamPatron" class="dpi" min="0" max="4" step="1" value="2" aria-label="Tamaño del patrón">
-        </div>
-        <div class="sub">Iconos y tamaño</div>
-        <div class="lbl">Iconos</div>
-        <div class="chips" id="chipsIconos"></div>
-        <div class="lbl">Tamaño (DPI)</div>
-        <div class="dpi-caja">
-          <div class="dpi-marcas"><span></span><span></span><span></span><span></span><span></span></div>
-          <input type="range" id="dpi" class="dpi" min="0" max="4" step="1" value="3" aria-label="Tamaño de la app (DPI)">
-        </div>
-      </div>
-    </details>
-
-    <details class="card grupo" id="grupoDatos">
-      <summary><span class="g-ico">💾</span><span class="g-txt"><b>Tus datos</b><small>Exportar e importar una copia</small></span></summary>
-      <div class="grupo-cuerpo">
-        <p class="ayuda izq" id="estadoDatos"></p>
-        <button class="opcion" id="exportar"><b>⬇️ Exportar copia</b><small>Descarga un archivo con tus avatars, jueces y fotos</small></button>
-        <button class="opcion" id="importar"><b>⬆️ Importar copia</b><small>Carga un archivo que exportaste antes</small></button>
-        <input type="file" id="archivoCopia" accept=".json,application/json" hidden>
-      </div>
-    </details>
-
-    <details class="card grupo" id="tarjetaBorrar">
-      <summary><span class="g-ico">🗑️</span><span class="g-txt"><b>Borrar datos</b><small>Para empezar una dinámica nueva</small></span></summary>
-      <div class="grupo-cuerpo">
-        <p class="ayuda izq">Antes de borrar puedes guardar una copia en «Tus datos». Cada borrado pide confirmación y hay que esperar 5 segundos.</p>
-        <button class="opcion peligro" id="borrarProgreso"><b>Borrar el progreso de los jueces</b><small>Pone en cero sus estadísticas. Los avatars y sus puntajes se quedan</small></button>
-        <button class="opcion peligro" id="borrarAvatars"><b>Borrar todos los avatars</b><small>Quita a todos los participantes. Los jueces (con su progreso), las clases y tus preferencias se quedan</small></button>
-        <button class="opcion peligro" id="borrarTodo"><b>Borrar todo</b><small>Avatars, jueces y clases propias. Se mantienen tus preferencias (tema, DPI, iconos)</small></button>
-      </div>
-    </details>
-
-    <p class="creditos">☆Creado por KennyKressinR☆<br>Todos los derechos reservados</p>
+    </div>
+    <div class="card" id="tarjetaEspeciales">
+      <h2>✨ Temas especiales</h2>
+      <p class="ayuda izq">Estilos completos con degradados, brillos y cristal. Al elegir uno reemplaza el modo y el color; para volver, toca "Colores normales" o elige un color.</p>
+      <div class="especiales" id="especiales"></div>
+    </div>
+    <div class="card" id="tarjetaBorrar">
+      <h2>🗑️ Borrar datos</h2>
+      <p class="ayuda izq">Para empezar una dinámica nueva. Antes de borrar puedes guardar una copia en «Tus datos». Cada borrado pide confirmación y hay que esperar 5 segundos.</p>
+      <button class="opcion peligro" id="borrarProgreso"><b>Borrar el progreso de los jueces</b><small>Pone en cero sus estadísticas. Los avatars y sus puntajes se quedan</small></button>
+      <button class="opcion peligro" id="borrarAvatars"><b>Borrar todos los avatars</b><small>Quita a todos los participantes. Los jueces (con su progreso), las clases y tus preferencias se quedan</small></button>
+      <button class="opcion peligro" id="borrarTodo"><b>Borrar todo</b><small>Avatars, jueces y clases propias. Se mantienen tus preferencias (tema, DPI, iconos)</small></button>
+    </div>
   </section>
 </main>
 
@@ -451,7 +408,7 @@ let state = {                                // todo lo que se guarda en el nave
   clases: ['General', 'Mujeres', 'Hombres', 'Femboy', 'Memes', 'Horror'],   // clases del ranking (en Ajustes se pueden añadir más)
   tema: {modo: 'Automático', paleta: 'Azul'},
   pref: {iconos: 'SVG', patron: 'estrella', dpi: 3},                       // iconos: 'SVG' o 'Emojis' (Ajustes > Preferencias)
-  opc: {borrador: true, carnet: true, preguntarSec: true, compacto: false, sonido: true, claseAbierta: false, enterPuntaje: true, vibrar: false, pantalla: false},   // opciones de comodidad (Ajustes)
+  opc: {borrador: true, carnet: true, preguntarSec: true, compacto: false, sonido: true, claseAbierta: false},   // opciones de comodidad (Ajustes)
   nombres: Array.from({length: MAX_JUECES}, (_, i) => 'Juez ' + (i + 1))
 };
 let form = formVacio();                      // el avatar que se está llenando
@@ -499,16 +456,6 @@ const num = s => { const n = parseFloat(String(s).replace(',', '.')); return isN
 const promedio = js => { const v = js.map(j => num(j.pts)).filter(n => n !== null); return v.length ? v.reduce((a, b) => a + b) / v.length : null; };
 const fondo = foto => foto ? `style="background-image:url('${foto}')"` : '';
 
-let bloqueo = null;                          // evita que la pantalla se apague mientras la app está abierta (opción en Ajustes)
-async function mantenerPantalla() {
-  try {
-    if (state.opc.pantalla && !bloqueo && navigator.wakeLock) {
-      bloqueo = await navigator.wakeLock.request('screen');
-      bloqueo.addEventListener('release', () => { bloqueo = null; });
-    } else if (!state.opc.pantalla && bloqueo) { await bloqueo.release(); bloqueo = null; }
-  } catch (e) { /* este navegador no lo permite */ }
-}
-document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') mantenerPantalla(); });
 let audio = null;
 function burbuja() {                         // sonido de gotita: un tono corto que sube de grave a agudo y se apaga rápido
   if (!state.opc.sonido) return;
@@ -527,24 +474,12 @@ function burbuja() {                         // sonido de gotita: un tono corto 
     osc.start(t); osc.stop(t + 0.16);
   } catch (e) { /* sin audio: no pasa nada */ }
 }
-document.addEventListener('click', e => {
-  if (!e.target.closest('button, summary, [role=button], .foto, .fila-op')) return;
-  burbuja();
-  if (state.opc.vibrar) navigator.vibrate?.(8);           // vibración suave
-}, true);
+document.addEventListener('click', e => { if (e.target.closest('button, summary, [role=button], .foto, .fila-op')) burbuja(); }, true);
 
-function aviso(texto, accion = null) {       // mensajito temporal abajo (con un botón opcional, por ejemplo "Deshacer")
+function aviso(texto) {                      // mensajito temporal abajo
   const el = $('#aviso');
-  el.textContent = texto;
-  if (accion) {
-    const b = document.createElement('button');
-    b.className = 'deshacer'; b.textContent = accion.etiqueta;
-    b.onclick = () => { el.classList.remove('ver'); accion.fn(); };
-    el.append(' ', b);
-  }
-  el.classList.toggle('con-accion', !!accion);
-  iconizar(el); el.classList.add('ver');
-  clearTimeout(aviso.t); aviso.t = setTimeout(() => el.classList.remove('ver'), accion ? 7000 : 2800);
+  el.textContent = texto; iconizar(el); el.classList.add('ver');
+  clearTimeout(aviso.t); aviso.t = setTimeout(() => el.classList.remove('ver'), 2800);
 }
 function pintarChips(el, lista, activo, alElegir) {
   el.innerHTML = lista.map(c => `<button class="chip ${c === activo ? 'on' : ''}" data-c="${c}">${ICONO[c] ?? ''} ${c}</button>`).join('');
@@ -622,11 +557,7 @@ const DIBUJOS = {                            // dibujos de 24x24 (solo trazo, to
   arriba: '<polyline points="18 15 12 9 6 15"/>',
   abajo: '<polyline points="6 9 12 15 18 9"/>',
   equis: '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
-  destellos: '<path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/>',
-  portapapeles: '<rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>',
-  izquierda: '<polyline points="15 18 9 12 15 6"/>',
-  derecha: '<polyline points="9 18 15 12 9 6"/>',
-  campana: '<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>'
+  destellos: '<path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/>'
 };
 const ICONOS = {                             // emoji -> nombre de su dibujo
   '⭐': 'estrella', '🌟': 'estrella', '⚙': 'ajustes', '✍': 'pluma', '✏': 'lapiz', '🏆': 'trofeo', '👥': 'usuarios', '👤': 'usuario',
@@ -634,7 +565,7 @@ const ICONOS = {                             // emoji -> nombre de su dibujo
   '🙂': 'sonrisa', '😊': 'sonrisa', '😠': 'enojado', '😂': 'risa', '🔍': 'buscar', '🤔': 'buscar', '🕒': 'reloj', '🔤': 'letras',
   '👩': 'mujer', '👨': 'hombre', '☀': 'sol', '🌙': 'luna', '🔄': 'girar', '➕': 'mas', '📦': 'archivo', '↩': 'deshacer', '🗑': 'basura',
   '⚖': 'balanza', '✅': 'ok', '💬': 'mensaje', '✔': 'check', '⬇': 'bajar', '⬆': 'subir', '🧰': 'herramienta', '🎨': 'paleta',
-  '⚠': 'alerta', '📝': 'nota', '🥇': 'oro', '🥈': 'plata', '🥉': 'bronce', '👻': 'fantasma', '❌': 'tachar', '🏷': 'etiqueta', '🎀': 'lazo', '🔼': 'arriba', '🔽': 'abajo', '✖': 'equis', '✨': 'destellos', '📋': 'portapapeles', '◀': 'izquierda', '▶': 'derecha', '🔔': 'campana'
+  '⚠': 'alerta', '📝': 'nota', '🥇': 'oro', '🥈': 'plata', '🥉': 'bronce', '👻': 'fantasma', '❌': 'tachar', '🏷': 'etiqueta', '🎀': 'lazo', '🔼': 'arriba', '🔽': 'abajo', '✖': 'equis', '✨': 'destellos'
 };
 const MAPA = Object.fromEntries(Object.entries(ICONOS).map(([e, n]) => [e.replace(/\uFE0F/g, ''), n]));
 const RE_ICONO = new RegExp('(' + Object.keys(MAPA).join('|') + ')\\uFE0F?', 'gu');
@@ -790,13 +721,13 @@ function pintarFoto() {
 }
 function pintarJueces() {
   const compacto = state.opc.compacto;       // true = comentarios contraídos: cada juez ocupa una sola fila
-  $('#jueces').innerHTML = panel().map((p, i, todos) => {
+  $('#jueces').innerHTML = panel().map(p => {
     const e = entrada(p.id), abierto = !compacto || form.abiertos?.[p.id];
     return `
     <div class="card juez ${compacto ? 'compacto' : ''}" data-j="${p.id}">
       <div class="juez-top">
         ${quienEs(p.id, p.nombre)}
-        <input type="text" class="pts" inputmode="decimal" enterkeyhint="${state.opc.enterPuntaje && i === todos.length - 1 ? 'done' : 'next'}" placeholder="0 a 10" value="${esc(e.pts)}" data-k="pts" aria-label="Puntaje de ${esc(p.nombre)}">
+        <input type="text" class="pts" inputmode="decimal" placeholder="0 a 10" value="${esc(e.pts)}" data-k="pts" aria-label="Puntaje de ${esc(p.nombre)}">
         ${compacto ? `<button class="mini-btn ${e.pos || e.neg || e.neu ? 'on' : ''}" data-abrir="${p.id}" aria-label="Comentarios de ${esc(p.nombre)}">💬</button>` : ''}
       </div>
       ${abierto ? `
@@ -904,13 +835,6 @@ $('#nombre').oninput = e => { form.nombre = e.target.value; e.target.classList.r
 $('#gamertag').oninput = e => { form.gamertag = e.target.value; guardarBorrador(); };
 $('#desc').oninput = e => { form.desc = e.target.value; guardarBorrador(); };
 $('#guardar').onclick = guardarAvatar;
-$('#jueces').addEventListener('keydown', e => {      // Enter en un puntaje: pasa al puntaje del siguiente juez (Mayús + Enter: al anterior)
-  if (e.key !== 'Enter' || !e.target.classList.contains('pts') || !state.opc.enterPuntaje) return;
-  e.preventDefault();
-  const campos = [...document.querySelectorAll('#jueces .pts')], destino = campos[campos.indexOf(e.target) + (e.shiftKey ? -1 : 1)];
-  if (destino) destino.focus(); else e.target.blur();
-});
-$('#jueces').addEventListener('focusin', e => { if (e.target.classList.contains('pts')) e.target.select(); });   // al tocar un puntaje se selecciona: lo que escribes lo reemplaza
 $('#chipsClase').onclick = e => {                  // marcar o desmarcar clases en el registro
   const b = e.target.closest('.chip');
   if (!b) return;
@@ -963,7 +887,6 @@ function pintarRanking() {
   $('#contarRanking').textContent = lista.length === todos.length ? cuenta(todos.length) : `${lista.length} de ${cuenta(todos.length)}`;
   if (orden === 'Recientes') lista.sort((a, b) => parseInt(b.id, 36) - parseInt(a.id, 36));   // el puesto no cambia, solo el orden de la lista
   if (orden === 'A–Z') lista.sort((a, b) => a.nombre.localeCompare(b.nombre));
-  ultimaLista = lista;                        // lo que se ve ahora: sirve para pasar de un carnet al siguiente
   $('#lista').innerHTML = lista.length ? lista.map(a => `
     <div class="fila-wrap ${a.tachado ? 'tachado' : ''}">
     <button class="fila" data-id="${a.id}">
@@ -978,26 +901,8 @@ function pintarRanking() {
   iconizar($('#lista'));
 }
 $('#buscar').oninput = pintarRanking;
-$('#copiarRanking').onclick = copiarRanking;
 $('#limpiarBusqueda').onclick = () => { $('#buscar').value = ''; pintarRanking(); $('#buscar').focus(); };
 $('#ocultarTachados').onchange = e => { ocultarTachados = e.target.checked; pintarRanking(); };
-async function copiarTexto(texto) {          // copia al portapapeles (con un plan B por si el navegador no deja)
-  let ok = false;
-  try { await navigator.clipboard.writeText(texto); ok = true; }
-  catch (e) {
-    const t = document.createElement('textarea');
-    t.value = texto; t.style.cssText = 'position:fixed;opacity:0';
-    document.body.appendChild(t); t.select();
-    try { ok = document.execCommand('copy'); } catch (e2) { ok = false; }
-    t.remove();
-  }
-  aviso(ok ? '📋 Copiado' : 'No se pudo copiar');
-}
-function copiarRanking() {                   // el ranking tal como se ve ahora (con su filtro y búsqueda), listo para pegar
-  const lineas = ultimaLista.map(a => `${a.pos}. ${a.nombre} - ${a.avg.toFixed(2)}${a.tachado ? ' (se fue)' : ''}`);
-  if (!lineas.length) return aviso('No hay nada que copiar');
-  copiarTexto(`Ranking ${filtro}\n${lineas.join('\n')}`);
-}
 function alternarTachado(id) {               // tacha (se fue) o quita el tachado; el avatar conserva su puesto
   const a = state.avatars.find(x => x.id === id);
   a.tachado = !a.tachado;
@@ -1014,81 +919,50 @@ $('#lista').onclick = e => {
 /* ---------- 7. CARNET (perfil del avatar) ---------- */
 const comentario = (clase, icono, texto) => texto ? `<div class="com ${clase}">${icono} ${esc(texto)}</div>` : '';
 
-let ultimaLista = [];                        // lo que se ve ahora en el ranking: sirve para pasar de un carnet al siguiente
-
 function abrirCarnet(id, recienGuardado = false) {
-  const general = ordenados('General'), a = general.find(x => x.id === id);   // "General" incluye a todos los avatars
+  const general = ordenados('General'), a = general.find(x => x.id === id), g = a;   // "General" incluye a todos los avatars
   const porClase = (a.cats || []).map(c => { const l = ordenados(c); return {c, pos: l.find(x => x.id === id).pos, total: l.length}; });
-  const puntos = a.jueces.map(j => j.pts).filter(p => p !== null), n = puntos.length;
-  const ids = (ultimaLista.some(x => x.id === id) ? ultimaLista : general).map(x => x.id);
-  const k = ids.indexOf(id), antes = ids[k - 1] || '', despues = ids[k + 1] || '';
-  $('#carnet').dataset.antes = antes; $('#carnet').dataset.despues = despues;
+  const n = a.jueces.filter(j => j.pts !== null).length;
   $('#carnet').innerHTML = `
-    <div class="carnet-barra">
-      <div class="carnet-nav">
-        <button class="mini-btn" id="cAnterior" aria-label="Avatar anterior" ${antes ? '' : 'disabled'}>◀️</button>
-        <span class="opt cnt">${k + 1} de ${ids.length}</span>
-        <button class="mini-btn" id="cSiguiente" aria-label="Avatar siguiente" ${despues ? '' : 'disabled'}>▶️</button>
-      </div>
-      <button class="mini-btn" id="cX" aria-label="Cerrar">✖</button>
-    </div>
-    ${recienGuardado ? `<div class="banner">✅ ¡Guardado! Puesto #${a.pos} en General${porClase.map(x => `, #${x.pos} en ${esc(x.c)}`).join('')}</div>` : ''}
+    ${recienGuardado ? `<div class="banner">✅ ¡Guardado! Puesto #${g.pos} en General${porClase.map(x => `, #${x.pos} en ${esc(x.c)}`).join('')}</div>` : ''}
     <div class="carnet-top">
       <div class="marco">
         <div class="carnet-foto" ${fondo(a.foto)}>${a.foto ? '' : '🙂'}</div>
-        ${a.pos <= 3 ? `<div class="medalla">${['🥇', '🥈', '🥉'][a.pos - 1]}</div>` : ''}
         <div class="sello" title="Promedio">${a.avg.toFixed(2)}</div>
       </div>
       <h2>${esc(a.nombre)}</h2>
-      ${a.gamertag ? `<div class="gt">@${esc(a.gamertag)}</div>` : ''}
-      <div class="pills">${(a.cats?.length ? a.cats : ['General']).map(c => `<span class="pill">${ICONO[c]} ${esc(c)}</span>`).join('')}</div>
-      <div class="datos">
-        <div><b>#${a.pos}</b><small>de ${general.length} en General</small></div>
-        <div><b>${n}</b><small>juez${n === 1 ? '' : 'es'}</small></div>
-        <div><b>${n ? Math.min(...puntos) + '–' + Math.max(...puntos) : '—'}</b><small>mínimo y máximo</small></div>
-      </div>
-      ${porClase.length ? `<div class="pills">${porClase.map(x => `<span class="pill suave">${ICONO[x.c]} #${x.pos} de ${x.total} en ${esc(x.c)}</span>`).join('')}</div>` : ''}
+      ${a.gamertag ? `<div class="opt">@${esc(a.gamertag)}</div>` : ''}
+      ${(a.cats?.length ? a.cats : ['General']).map(c => `<span class="pill">${ICONO[c]} ${esc(c)}</span>`).join(' ')}
+      <div class="puesto">🏆 Puesto #${g.pos} de ${general.length} en General</div>
+      ${porClase.map(x => `<div class="puesto">${ICONO[x.c]} Puesto #${x.pos} de ${x.total} en ${esc(x.c)}</div>`).join('')}
+      <div class="opt">Promedio de ${n} juez${n === 1 ? '' : 'es'}</div>
       ${a.tachado ? '<div class="se-fue">❌ Se fue: está tachado en el ranking</div>' : ''}
       <button class="link" id="cTachar">${a.tachado ? 'Quitar tachado' : 'Tachar (se fue)'}</button>
       ${a.desc ? `<p class="desc">💬 ${esc(a.desc)}</p>` : ''}
     </div>
-    <div class="jscroll">${a.jueces.map(j => `
+    <div class="jscroll">${a.jueces.map((j, i) => `
       <div class="jrow">
         <div class="jhead">${quienEs(j.jid, j.nom)}<span class="badge">${j.pts ?? '—'}</span></div>
-        ${j.pts !== null ? `<div class="medidor"><i style="width:${j.pts * 10}%"></i></div>` : ''}
         ${comentario('ok', '👍', j.pos)}${comentario('bad', '👎', j.neg)}${comentario('neu', '😐', j.neu)}
       </div>`).join('')}</div>
-    ${recienGuardado ? '<button class="link" id="cRanking">🏆 Ver ranking completo</button>' : ''}
-    <div class="carnet-acciones">
+    <div class="acciones">
       <button class="btn sec" id="cEditar">✏️ Editar</button>
       <button class="btn sec" id="cBorrar">🗑️ Eliminar</button>
       <button class="btn" id="cCerrar">${recienGuardado ? '➕ Calificar otro' : 'Cerrar'}</button>
-    </div>`;
+    </div>
+    ${recienGuardado ? '<div class="acciones" style="margin-top:0"><button class="btn sec" id="cRanking">🏆 Ver ranking completo</button></div>' : ''}`;
   iconizar($('#carnet'));
-  $('#cX').onclick = $('#cCerrar').onclick = () => $('#dlgCarnet').close();
-  $('#cAnterior').onclick = () => abrirCarnet(antes);
-  $('#cSiguiente').onclick = () => abrirCarnet(despues);
+  $('#cCerrar').onclick = () => $('#dlgCarnet').close();
   $('#cTachar').onclick = () => { alternarTachado(id); abrirCarnet(id, recienGuardado); };
   $('#cEditar').onclick = () => { $('#dlgCarnet').close(); editarAvatar(id); };
   dosToques($('#cBorrar'), () => borrarAvatar(id));
   if (recienGuardado) $('#cRanking').onclick = () => { $('#dlgCarnet').close(); irA('ranking'); };
-  if (a.foto) {                              // la foto no se muestra más grande de lo que permite su resolución (así no se ve borrosa)
-    const im = new Image();
-    im.onload = () => { const m = $('#carnet .marco'); if (m) m.style.maxWidth = Math.round(im.naturalWidth * 0.75) + 'px'; };
-    im.src = a.foto;
-  }
   if (!$('#dlgCarnet').open) $('#dlgCarnet').showModal();
-  $('#dlgCarnet').scrollTop = 0;
 }
-function borrarAvatar(id) {                  // se puede deshacer unos segundos
-  const avatar = state.avatars.find(a => a.id === id), historial = state.historial.filter(h => h.aid === id);
+function borrarAvatar(id) {
   state.avatars = state.avatars.filter(a => a.id !== id);
   state.historial = state.historial.filter(h => h.aid !== id);
-  guardarEstado(); $('#dlgCarnet').close(); pintarRanking();
-  aviso('🗑️ Avatar eliminado', {etiqueta: 'Deshacer', fn: () => {
-    state.avatars.push(avatar); state.historial.push(...historial);
-    guardarEstado(); pintarRanking(); aviso('↩️ Avatar recuperado');
-  }});
+  guardarEstado(); $('#dlgCarnet').close(); pintarRanking(); aviso('🗑️ Avatar eliminado');
 }
 
 /* ---------- 8. PANTALLA "JUECES" ---------- */
@@ -1264,7 +1138,17 @@ const ESPECIALES = {                         // temas especiales: [nombre, muest
   metro: ['Frutiger Metro', 'linear-gradient(90deg,#00aba9 33%,#d80073 33% 66%,#a4c400 66%)', '#fff'],
   miku: ['Hatsune Miku', 'linear-gradient(160deg,#eafffd,#7fdcd4 60%,#ff8fc4)', '#08403c'],
   teto: ['Kasane Teto', 'linear-gradient(160deg,#fff4f6,#f08aa0 60%,#c8284a)', '#4a1020'],
-  neru: ['Akita Neru', 'linear-gradient(160deg,#1b170a,#3a3210 55%,#ffd400)', '#fff6c8']
+  neru: ['Akita Neru', 'linear-gradient(160deg,#1b170a,#3a3210 55%,#ffd400)', '#fff6c8'],
+  aero: ['Frutiger Aero', 'radial-gradient(circle at 18% 28%,#ffffffcc 0 8%,transparent 9%),radial-gradient(circle at 82% 22%,#ffffffaa 0 11%,transparent 12%),radial-gradient(120% 40% at 50% 118%,#7ed957 0 56%,transparent 57%),linear-gradient(180deg,#5ec2ff,#cdeeff 62%,#f2fdff)', '#07334f'],
+  synth: ['Synthwave', 'radial-gradient(circle at 50% 70%,#ffd23f 0 12%,#ff3d9a 13% 26%,transparent 27%),linear-gradient(180deg,#12062e,#3b0f6b 55%,#8a1f7a)', '#ffe9fb'],
+  paper: ['Cuaderno', 'linear-gradient(90deg,transparent 14px,#e8707099 14px 16px,transparent 16px),repeating-linear-gradient(180deg,transparent 0 11px,#a9cdf2 11px 12px),#fffdf3', '#2b2a3a'],
+  pixel: ['Pixel Retro', 'radial-gradient(#fff 1px,transparent 1.6px) 0 0/16px 16px,#0b1030', '#fff6d6'],
+  candy: ['Dulce', 'radial-gradient(circle at 20% 25%,#ffffffaa 0 10%,transparent 11%),linear-gradient(160deg,#ffe3f0,#ffb3d6 60%,#c9f0ff)', '#5a2145'],
+  sunset: ['Atardecer', 'radial-gradient(circle at 50% 80%,#fff3c4 0 10%,#ffd27a 11% 20%,transparent 21%),linear-gradient(180deg,#3b1f6a,#c4456b 48%,#ff6a3d 75%,#ffc14d)', '#ffffff'],
+  ocean: ['Océano', 'radial-gradient(120% 40% at 28% 112%,#2ec4b6 0 58%,transparent 59%),linear-gradient(180deg,#e0f6ff,#74cbea 55%,#0d5c9c)', '#08334f'],
+  chalk: ['Pizarra', 'radial-gradient(ellipse at 30% 20%,#2f5d46,transparent 60%),linear-gradient(160deg,#25503b,#1b3a2b)', '#f6f3e4'],
+  neon: ['Neón Negro', 'radial-gradient(circle at 85% 10%,#ff2bd666,transparent 45%),radial-gradient(circle at 10% 100%,#ffe60055,transparent 50%),#07070b', '#fffbe0'],
+  chrome: ['Cromo Y2K', 'radial-gradient(circle at 20% 20%,#fff 0 10%,transparent 11%),linear-gradient(135deg,#eef1f7,#c3cad8 45%,#f7f8fc 62%,#9aa4bb)', '#26304d']
 };
 const MODOS = {Claro: 'light', Oscuro: 'dark', Automático: null};              // null = sigue al teléfono
 let descargas = null;                        // permiso para descargar archivos (null si esta vista no lo tiene)
@@ -1332,7 +1216,7 @@ function aplicarTema() {
 function cambioTema() { aplicarTema(); guardarEstado(); pintarAjustes(); }
 function pintarAjustes() {
   $('#estadoDatos').textContent = `✅ Todo se guarda solo en este dispositivo: ${state.avatars.length} avatars y ${state.jueces.length} jueces.`;
-  document.querySelectorAll('#ajustes [data-o]').forEach(i => i.checked = state.opc[i.dataset.o]);
+  document.querySelectorAll('#comodidad [data-o]').forEach(i => i.checked = state.opc[i.dataset.o]);
   pintarChips($('#chipsModo'), Object.keys(MODOS), state.tema.modo, m => { state.tema.modo = m; state.tema.especial = null; cambioTema(); });
   pintarChips($('#chipsIconos'), ['SVG', 'Emojis'], state.pref.iconos, c => { state.pref.iconos = c; cambioTema(); });
   $('#dpi').value = state.pref.dpi ?? 3;
@@ -1422,7 +1306,7 @@ function borrarClase(clase) {                // la quita de la lista y de los av
 }
 const historialDe = avatars => avatars.flatMap(a => a.jueces.filter(j => j.pts !== null).map(j => ({aid: a.id, jid: j.jid, pts: j.pts, dif: j.pts - a.avg})));
 function normalizarEstado() {                // completa lo que falte en datos de versiones anteriores
-  state.opc = {preguntarSec: true, compacto: false, sonido: true, claseAbierta: false, enterPuntaje: true, vibrar: false, pantalla: false, ...state.opc};
+  state.opc = {preguntarSec: true, compacto: false, sonido: true, claseAbierta: false, ...state.opc};
   state.pref.dpi ??= {Chiquito: 2, 'Muy Bajo': 1, Bajo: 2, Normal: 3, Grande: 4, Alto: 4}[state.pref.escala] ?? 3;   // antes el tamaño tenía nombres
   delete state.pref.escala;
   if (state.tema.paleta === 'Menta' && !state.tema.elegido) state.tema.paleta = 'Azul';   // el azul es el predeterminado
@@ -1522,29 +1406,18 @@ $('#formas').onclick = e => {
   const b = e.target.closest('[data-f]');
   if (b) { state.pref.patron = b.dataset.f; cambioTema(); }
 };
-$('#ajustes').onchange = e => {
+$('#comodidad').onchange = e => {
   const k = e.target.dataset.o;
   if (!k) return;
   state.opc[k] = e.target.checked;
   if (k === 'compacto') ponerCompacto(e.target.checked);
   if (k === 'sonido' && e.target.checked) burbuja();
-  if (k === 'pantalla') mantenerPantalla();
   if (k === 'borrador' && !e.target.checked) { clearTimeout(tBorrador); Almacen.guardar(null, 'borrador'); }
   guardarEstado();
 };
 
 /* ---------- 10. ARRANQUE ---------- */
 document.querySelectorAll('[data-v]').forEach(t => t.onclick = () => irA(t.dataset.v));
-let toque = null;                            // deslizar a los lados en el carnet: avatar anterior / siguiente
-$('#dlgCarnet').addEventListener('touchstart', e => { toque = {x: e.touches[0].clientX, y: e.touches[0].clientY}; }, {passive: true});
-$('#dlgCarnet').addEventListener('touchend', e => {
-  if (!toque) return;
-  const dx = e.changedTouches[0].clientX - toque.x, dy = e.changedTouches[0].clientY - toque.y, d = $('#carnet').dataset;
-  toque = null;
-  if (Math.abs(dx) < 70 || Math.abs(dx) < Math.abs(dy) * 2) return;
-  const destino = dx > 0 ? d.antes : d.despues;
-  if (destino) abrirCarnet(destino);
-});
 $('#dlgCarnet').onclick = e => { if (e.target.id === 'dlgCarnet') e.target.close(); };
 $('#dlgJuez').onclick = e => { if (e.target.id === 'dlgJuez') e.target.close(); };
 aplicarTema();                               // tema por defecto mientras se cargan los datos
@@ -1555,7 +1428,6 @@ aplicarTema();                               // tema por defecto mientras se car
   migrar(); aplicarTema();
   if (borrador && state.opc.borrador) { form = {...formVacio(), ...borrador}; aviso('📝 Recuperé lo que estabas llenando'); }
   pintarFormulario(); pintarRanking(); pintarEquipo(); pintarAjustes();
-  mantenerPantalla();
   window.claude?.use('downloads').then(d => { descargas = d; pintarAjustes(); }, () => {});
 })();
 </script>
